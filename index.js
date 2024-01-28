@@ -6,17 +6,25 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 dotenv.config();
+
 const app = express();
-const port = process.env.PORT || "3000"
+const port = process.env.PORT || 3000;
+
 app.use(cors({
     origin: '*'
 }));
 
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
 // MongoDB connection
-const mongoDBUri = process.env.MONGO_URL; // Replace with your MongoDB connection URI
+const mongoDBUri = process.env.MONGO_URL;
 mongoose.connect(mongoDBUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // Remove the deprecated options
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
@@ -26,11 +34,10 @@ db.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
-
-
+const customerRouter = require("./Routes/customerRoute");
+app.use("/customer", customerRouter);
 
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-});
-
+})
