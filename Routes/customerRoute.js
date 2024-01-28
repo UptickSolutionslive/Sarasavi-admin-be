@@ -6,7 +6,7 @@ let  User = require("../models/customerModel")
 
 //http://localhost:3000/user/add
 router.route("/add").post((req,res)=>{
-    const name = req.body.name;
+    // const name = req.body.name;
     const mobileNo = req.body.mobileNo;
     const email = req.body.email;
     const address = req.body.address;
