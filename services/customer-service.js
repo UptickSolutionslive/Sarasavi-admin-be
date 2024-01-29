@@ -1,4 +1,4 @@
-let customer = require("../models/customerModel")
+let customer = require("../models/customer-model")
 
 async function SaveCustomer(req) {
 

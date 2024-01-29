@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-let User = require("../models/customerModel")
+let User = require("../models/customer-model")
 
 const controller = require("../controllers/customer-controller");
 

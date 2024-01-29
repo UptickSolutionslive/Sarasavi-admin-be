@@ -34,7 +34,7 @@ db.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
-const customerRouter = require("./Routes/customerRoute");
+const customerRouter = require("./routes/customer-route");
 app.use("/customer", customerRouter);
 
 // Start the server
