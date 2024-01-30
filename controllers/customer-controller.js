@@ -33,9 +33,42 @@ async function getAllCustomer(req, res) {
     }
 }
 
+async function updateCustomer(req,res){
+    
+    try{
+        const result = await CustomerService.updateCustomer(req);
+        if(result.status === 200){
+            return response.sendSuccessResponse("Customer Updated Successfully",result,res);
+        }
+        else{
+            return response.sendBadRequestResponse("Error while updating customer",null,result.error,res);
+        }
+    }catch(err){
+        console.log(err);
+        // return response.sendServerErrorResponse("Error while updating customer",null,err,res);
+    }
+}
+
+async function deleteCustomer(req,res){
+    try{
+        const result = await CustomerService.deleteCustomer(req);
+        if(result.status === 200){
+            return response.sendSuccessResponse("Customer deleted Successfully",result,res);
+        }
+        else{
+            return response.sendBadRequestResponse("Error while deleting customer",null,result.error,res);
+        }
+    }catch(err){
+        return response.sendServerErrorResponse("Error while deleting customer",null,err,res);
+    }
+}
+
+
 module.exports = {
     CreateCustomer,
     getAllCustomer,
+    updateCustomer,
+    deleteCustomer
 }
 
 
