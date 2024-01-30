@@ -35,7 +35,10 @@ db.once('open', () => {
 });
 
 const customerRouter = require("./routes/customer-route");
+const categoryRouter = require("./routes/category-route");
+
 app.use("/customer", customerRouter);
+app.use("/category", categoryRouter);
 
 // Start the server
 app.listen(port, () => {
