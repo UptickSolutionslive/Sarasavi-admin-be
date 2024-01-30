@@ -32,8 +32,24 @@ async function SaveCustomer(req) {
     }
 }
 
+async function getAllCustomers() {
+    try {
+        const result = await customer.find();
+        if (result) {
+            return { status: 200, message: "Customers fetched successfully", data: result };
+        }
+        else {
+            return { status: 400, message: "Error while fetching customer", data: null, error: result.error };
+        }
+
+    } catch (err) {
+        return { status: 500, message: `Error while fetching customer ${err}`, error: err };
+    }
+}
+
 
 module.exports = {
     SaveCustomer,
+    getAllCustomers,
 
 }

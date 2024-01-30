@@ -18,8 +18,24 @@ async function CreateCustomer(req, res) {
     }
 }
 
+async function getAllCustomer(req, res) {
+    try {
+        const result = await CustomerService.getAllCustomers();
+        if (result.status === 200) {
+            return response.sendSuccessResponse("Customers fetched successfully", result, res);
+        }
+        else {
+            return response.sendBadRequestResponse("Error while fetching customer", null, result.error, res);
+        }
+    }
+    catch (err) {
+        return response.sendServerErrorResponse("Error while fetching customer", null, err, res);
+    }
+}
+
 module.exports = {
     CreateCustomer,
+    getAllCustomer,
 }
 
 

@@ -12,11 +12,7 @@ router.route("/").post((req, res) => {
 
 
 router.route("/").get((req, res) => {
-    User.find().then((user) => {
-        res.json(user)
-    }).catch((err) => {
-        console.log(err)
-    })
+    controller.getAllCustomer(req, res);
 })
 
 //update
