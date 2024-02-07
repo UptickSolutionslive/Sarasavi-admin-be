@@ -68,7 +68,7 @@ async function updateGrn(req) {
         const existingGrn = grn;
         const res = await reduceQuantity(existingGrn);
 
-    
+
 
         const result = await GrnModel.updateOne({
             _id: req.params.id
@@ -105,6 +105,8 @@ module.exports = {
     saveGrn,
     getGrn,
     updateGrn,
-    deleteGrn
+    deleteGrn,
+    updateQuantity,
+    reduceQuantity,
 
 }

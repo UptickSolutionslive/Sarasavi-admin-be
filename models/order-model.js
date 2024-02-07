@@ -1,0 +1,84 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const orderSchema = new Schema({
+    order_No: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    name: {
+        type: String,
+        required: true,
+    },
+    date: {
+        type: Date,
+        required: true,
+    },
+    customer: {
+        customerId: {
+            type: Schema.Types.ObjectId,
+            ref: 'customer',
+            required: true,
+        },
+        cNumber: {
+            type: String,
+            required: true,
+        },
+        cName: {
+            type: String,
+            required: true,
+        }
+    },
+    item: {
+        type: Schema.Types.ObjectId,
+        ref: 'item',
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    total: {
+        type: Number,
+        required: true,
+    },
+    remark: {
+        type: String,
+    },
+    status: {
+        type: String,
+        required: true,
+    },
+    created_by: {
+        type: String,
+        required: true,
+    },
+    order_type: {
+        type: String,
+        required: true,
+    },
+    delivery_type: {
+        type: String,
+        required: true,
+    },
+    isUrgent: {
+        type: Boolean,
+    },
+    isFast: {
+        type: Boolean,
+    },
+    additional_charges: {
+        type: Number,
+        required: true,
+    },
+    discount: {
+        type: Number,
+    },
+});
+
+module.exports = mongoose.model("order", orderSchema);
