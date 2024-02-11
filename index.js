@@ -54,6 +54,10 @@ app.use("/user",UserRouter)
 
 
 
+app.use("/user",UserRouter)
+
+
+
 
 // Start the server
 app.listen(port, () => {
