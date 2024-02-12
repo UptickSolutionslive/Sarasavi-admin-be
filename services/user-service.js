@@ -5,14 +5,15 @@ const jwt = require('jsonwebtoken');
 dotenv.config();
 
 async function saveUser() {
-    const { USER_NAMES, USER_PASSWORD } = process.env;
+    const { USER_NAMES, USER_PASSWORD, USER_ROLES } = process.env;
 
     // Splitting the comma-separated values into arrays
     const usernames = USER_NAMES.split(',');
     const passwords = USER_PASSWORD.split(',');
-    const userRoles = ['staff', 'admin', 'manager'];
+    const roles = USER_ROLES.split(',');
+    // const userRoles = ['staff', 'admin', 'manager'];
 
-console.log(usernames);
+
     try {
         // Assuming same length for usernames and passwords, and they correspond to each other
         for (let i = 0; i < usernames.length; i++) {
@@ -27,7 +28,7 @@ console.log(usernames);
             const newUser = new userModel({ 
                 username: usernames[i],
                 password: hashedPassword,
-                role: userRoles[i]
+                role: roles[i]
             });
 
             const result = await newUser.save();
