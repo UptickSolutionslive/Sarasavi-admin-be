@@ -45,16 +45,19 @@ const UserService = require("./services/user-service")
 const results = UserService.saveUser();
 const UserRouter = require('./routes/user-routes')
 
+const OrderRouter = require("./routes/order-route");
+
 
 app.use("/customer", customerRouter);
 app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/grn", grnRouter);
+app.use("/order", OrderRouter);
 app.use("/user",UserRouter)
 
 
 
-app.use("/user",UserRouter)
+
 
 
 
