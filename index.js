@@ -39,6 +39,7 @@ const categoryRouter = require("./routes/category-route");
 const itemRouter = require("./routes/item-route");  
 const grnRouter = require("./routes/grn-route");
 const OrderRouter = require("./routes/order-route");
+const invoiceRouter = require("./routes/invoice-route");
 
 
 app.use("/customer", customerRouter);
@@ -46,6 +47,8 @@ app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/grn", grnRouter);
 app.use("/order", OrderRouter);
+app.use("/invoice", invoiceRouter);
+
 
 // Start the server
 app.listen(port, () => {

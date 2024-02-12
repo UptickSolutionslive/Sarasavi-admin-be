@@ -1,6 +1,7 @@
 const OrderModel = require('../models/order-model');
 const ItemModel = require('../models/item-model');
-
+const InvoiceService = require('../services/invoice-service')
+const SmsService = require('../services/sms-service')
 async function createOrder(req, res) {
     try {
         const order = new OrderModel(req.body);
@@ -8,8 +9,18 @@ async function createOrder(req, res) {
         if (!result) {
             return { status: 400, error: "Error while saving order" };
         }
-        await reduceQuantity(req.body);
-        return { status: 200, result };
+        else {
+            await reduceQuantity(req.body);
+            const invoice = await InvoiceService.createInvoice(result);
+            const sms = await SmsService.sendSms(req.body);
+            if (invoice.status === 200) {
+                return { status: 200, result };
+            }
+            else {
+                return { status: 400, error: "Error while saving invoice" };
+            }
+
+        }
     }
     catch (err) {
         console.log(err)
@@ -18,7 +29,7 @@ async function createOrder(req, res) {
 }
 async function getAllOrders(req, res) {
     try {
-        const result = await OrderModel.find().sort({ date: 1 });   
+        const result = await OrderModel.find().sort({ date: 1 });
         return { status: 200, result };
     }
     catch (err) {

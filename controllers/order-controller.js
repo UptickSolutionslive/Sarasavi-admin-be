@@ -3,7 +3,6 @@ var OrderService = require("../services/order-service");
 var response = require("../utils/response-utils");
 
 async function createOrder(req, res) {
-    console.log(req.body)
     try {
         const result = await OrderService.createOrder(req);
         if (result.status === 200) {
@@ -18,7 +17,8 @@ async function createOrder(req, res) {
         }
     }
     catch (err) {
-        return response.sendServerErrorResponse("Error while saving order", null, err, res);
+        console.log(err)    
+        return response.sendServerErrorResponse("Error while catch saving order", null, err, res);
     }
 }
 
