@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
-      
+
 
 // MongoDB connection
 const mongoDBUri = process.env.MONGO_URL;
@@ -39,7 +39,7 @@ db.once('open', () => {
 
 const customerRouter = require("./routes/customer-route");
 const categoryRouter = require("./routes/category-route");
-const itemRouter = require("./routes/item-route");  
+const itemRouter = require("./routes/item-route");
 const grnRouter = require("./routes/grn-route");
 const UserService = require("./services/user-service")
 const results = UserService.saveUser();
@@ -54,17 +54,9 @@ app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/grn", grnRouter);
 app.use("/order", OrderRouter);
-<<<<<<< HEAD
-app.use("/user",UserRouter)
-
-
-
-
-
-
-=======
 app.use("/invoice", invoiceRouter);
->>>>>>> a5977c2 (order and invoice)
+app.use("/user", UserRouter)
+
 
 
 // Start the server
