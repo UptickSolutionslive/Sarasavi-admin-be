@@ -50,10 +50,6 @@ const orderSchema = new Schema({
     remark: {
         type: String,
     },
-    status: {
-        type: String,
-        required: true,
-    },
     created_by: {
         type: String,
         required: true,
@@ -74,11 +70,14 @@ const orderSchema = new Schema({
     },
     additional_charges: {
         type: Number,
-        required: true,
     },
     discount: {
         type: Number,
     },
+    delivery_charges: {
+        type: Number,
+    }
+
 });
 
 module.exports = mongoose.model("order", orderSchema);

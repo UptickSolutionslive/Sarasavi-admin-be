@@ -46,6 +46,7 @@ const results = UserService.saveUser();
 const UserRouter = require('./routes/user-routes')
 
 const OrderRouter = require("./routes/order-route");
+const invoiceRouter = require("./routes/invoice-route");
 
 
 app.use("/customer", customerRouter);
@@ -53,6 +54,7 @@ app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/grn", grnRouter);
 app.use("/order", OrderRouter);
+<<<<<<< HEAD
 app.use("/user",UserRouter)
 
 
@@ -60,6 +62,9 @@ app.use("/user",UserRouter)
 
 
 
+=======
+app.use("/invoice", invoiceRouter);
+>>>>>>> a5977c2 (order and invoice)
 
 
 // Start the server
