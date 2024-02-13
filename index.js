@@ -44,9 +44,9 @@ const grnRouter = require("./routes/grn-route");
 const UserService = require("./services/user-service")
 const results = UserService.saveUser();
 const UserRouter = require('./routes/user-routes')
-
 const OrderRouter = require("./routes/order-route");
 const invoiceRouter = require("./routes/invoice-route");
+const receiptRouter = require("./routes/receipt-route");
 
 
 app.use("/customer", customerRouter);
@@ -56,6 +56,8 @@ app.use("/grn", grnRouter);
 app.use("/order", OrderRouter);
 app.use("/invoice", invoiceRouter);
 app.use("/user", UserRouter)
+app.use("/receipt", receiptRouter);
+
 
 
 
