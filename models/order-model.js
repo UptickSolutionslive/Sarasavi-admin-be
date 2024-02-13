@@ -76,6 +76,9 @@ const orderSchema = new Schema({
     },
     delivery_charges: {
         type: Number,
+    },
+    paid_amount: {
+        type: Number,
     }
 
 });
