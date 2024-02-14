@@ -29,7 +29,7 @@ async function createOrder(req, res) {
 }
 async function getAllOrders(req, res) {
     try {
-        const result = await OrderModel.find().sort({ date: 1 });
+        const result = await OrderModel.find().sort({ cretedAt:-1 });
         return { status: 200, result };
     }
     catch (err) {
