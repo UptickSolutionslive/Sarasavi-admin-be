@@ -2,6 +2,8 @@ const OrderModel = require('../models/order-model');
 const ItemModel = require('../models/item-model');
 const InvoiceService = require('../services/invoice-service')
 const SmsService = require('../services/sms-service')
+const cron = require('node-cron');
+
 async function createOrder(req, res) {
     try {
         const order = new OrderModel(req.body);
@@ -29,7 +31,7 @@ async function createOrder(req, res) {
 }
 async function getAllOrders(req, res) {
     try {
-        const result = await OrderModel.find().sort({ cretedAt:-1 });
+        const result = await OrderModel.find().sort({ cretedAt: -1 });
         return { status: 200, result };
     }
     catch (err) {
@@ -56,8 +58,26 @@ async function reduceQuantity(order) {
         return err; f
     }
 }
+async function startPaymentCheckCronJob() {
+    cron.schedule('*/1 * * * *', async () => {
+        try {
+            const orders = await OrderModel.find();
+            for (const order of orders) {
+                if (order.total === order.paid_amount && !order.isCompleted) {
+                    order.isCompleted = true;
+                    await order.save();
+                }
+            }
+            console.log('Payment check completed.');
+        } catch (err) {
+            console.error('Error occurred while checking payments:', err);
+        }
+    });
+}
+
 
 module.exports = {
     createOrder,
     getAllOrders,
+    startPaymentCheckCronJob,
 }

@@ -79,7 +79,10 @@ const orderSchema = new Schema({
     },
     paid_amount: {
         type: Number,
-    }
+    },
+    isCompleted: {
+        type: Boolean,
+    },
 
 });
 
