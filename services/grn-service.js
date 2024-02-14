@@ -18,7 +18,7 @@ async function saveGrn(req) {
 
 async function getGrn(req) {
     try {
-        const result = await GrnModel.find();
+        const result = await GrnModel.find().sort({createdAt:-1});
         return { status: 200, result };
     }
     catch (err) {

@@ -20,7 +20,7 @@ async function saveItem(req) {
 
 async function getItems(req) {
     try {
-        const result = await ItemModel.find();
+        const result = await ItemModel.find().sort({ createdAt: -1 });
         return { status: 200, result };
     }
     catch (err) {

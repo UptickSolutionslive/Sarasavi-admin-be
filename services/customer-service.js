@@ -34,7 +34,7 @@ async function SaveCustomer(req) {
 
 async function getAllCustomers() {
     try {
-        const result = await customer.find();
+        const result = await customer.find().sort({createdAt:-1});
         if (result) {
             return { status: 200, message: "Customers fetched successfully", data: result };
         }
