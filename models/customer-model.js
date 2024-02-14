@@ -30,6 +30,6 @@ const customerSchema = new Schema({
         type : Number,
     },
 
-})
+},{timestamps:true})
 
 module.exports = mongoose.model("customer",customerSchema);

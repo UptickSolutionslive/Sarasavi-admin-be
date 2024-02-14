@@ -16,7 +16,7 @@ async function SaveCategory(req) {
 
 async function getAllCategories() {
     try {
-        const result = await Category.find();
+        const result = await Category.find().sort({createdAt:-1});
         return { status: 200, data: result };
     }
     catch (err) {
