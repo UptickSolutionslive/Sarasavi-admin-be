@@ -22,5 +22,5 @@ const invoiceSchema = new Schema({
     },
    
 
-})
+},{timestamps:true})
 module.exports = mongoose.model("invoice", invoiceSchema);

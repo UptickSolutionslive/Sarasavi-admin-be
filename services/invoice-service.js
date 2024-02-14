@@ -27,7 +27,7 @@ async function createInvoice(order) {
 
 async function getAllInvoices() {
     try {
-        const result = await InvoiceModel.find().populate('order_id');
+        const result = await InvoiceModel.find().populate('order_id').sort({createdAt:-1});
         if (!result) {
             return { status: 400, error: "Error while retrieving invoices" };
         }

@@ -38,7 +38,7 @@ async function createReceipt(receipt) {
 }
 async function getReceipts() {
     try {
-        const result = await ReceiptModel.find();
+        const result = await ReceiptModel.find().sort({createdAt:-1});
         return { status: 200, result };
     } catch (error) {
         return { status: 400, error };
