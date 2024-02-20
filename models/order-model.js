@@ -79,6 +79,13 @@ const orderSchema = new Schema({
     },
     paid_amount: {
         type: Number,
+    },
+    designby:{
+        type: String,
+    },
+    isActive : {
+        type : Boolean,
+        default : false
     }
 
 });

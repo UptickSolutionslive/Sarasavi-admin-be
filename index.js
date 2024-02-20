@@ -49,6 +49,7 @@ const invoiceRouter = require("./routes/invoice-route");
 const receiptRouter = require("./routes/receipt-route");
 
 
+
 app.use("/customer", customerRouter);
 app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
@@ -57,6 +58,7 @@ app.use("/order", OrderRouter);
 app.use("/invoice", invoiceRouter);
 app.use("/user", UserRouter)
 app.use("/receipt", receiptRouter);
+
 
 
 
