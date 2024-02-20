@@ -1,6 +1,9 @@
 const OrderModel = require('../models/order-model');
 const ItemModel = require('../models/item-model');
 const InvoiceService = require('../services/invoice-service')
+const SmsService = require('../services/sms-service')
+const cron = require('node-cron');
+
 const SmsService = require('../services/sms-service');
 const orderModel = require('../models/order-model');
 
@@ -90,6 +93,23 @@ async function reduceQuantity(order) {
         return err; f
     }
 }
+async function startPaymentCheckCronJob() {
+    cron.schedule('*/1 * * * *', async () => {
+        try {
+            const orders = await OrderModel.find();
+            for (const order of orders) {
+                if (order.total === order.paid_amount && !order.isCompleted) {
+                    order.isCompleted = true;
+                    await order.save();
+                }
+            }
+            console.log('Payment check completed.');
+        } catch (err) {
+            console.error('Error occurred while checking payments:', err);
+        }
+    });
+}
+
 
 async function activateJob(req){
     let jobId = req.params.id;
@@ -128,6 +148,7 @@ async function deleteOrder(req) {
 module.exports = {
     createOrder,
     getAllOrders,
+    startPaymentCheckCronJob,
     activateJob,
     getActiveJobs,
     getDeactivateJobs,

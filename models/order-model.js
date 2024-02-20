@@ -80,6 +80,7 @@ const orderSchema = new Schema({
     paid_amount: {
         type: Number,
     },
+<<<<<<< HEAD
     designby:{
         type: String,
     },
@@ -87,6 +88,11 @@ const orderSchema = new Schema({
         type : Boolean,
         default : false
     }
+=======
+    isCompleted: {
+        type: Boolean,
+    },
+>>>>>>> 840545e74d589895a7a200483878f93d5020bb4d
 
 });
 
