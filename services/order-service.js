@@ -4,8 +4,8 @@ const InvoiceService = require('../services/invoice-service')
 const SmsService = require('../services/sms-service')
 const cron = require('node-cron');
 
-const SmsService = require('../services/sms-service');
-const orderModel = require('../models/order-model');
+
+
 
 async function createOrder(req, res) {
     console.log(req);
