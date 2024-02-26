@@ -15,6 +15,11 @@ const receiptSchema = new Schema({
         type: Number,
         required: true
     },
+    customer: {
+        type: Schema.Types.ObjectId,
+        ref: 'customer',
+        required: true
+    },
     payment_method: {
         type: {
             method: {
@@ -43,5 +48,5 @@ const receiptSchema = new Schema({
         required: true
     },
 
-},{timestamps:true})
+}, { timestamps: true })
 module.exports = mongoose.model("receipt", receiptSchema);
