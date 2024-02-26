@@ -38,33 +38,49 @@ async function createJob(req, res) {
 }
 
 async function activateJob(req, res) {
-    try {
-        const result = await JobService.activateJob(req);
-        if (result.status === 200) {
-        return response.sendSuccessResponse(
-            "Job activated successfully",
-            result,
-            res
-        );
-        } else {
-        return response.sendBadRequestResponse(
-            "Error while activating job",
-            null,
-            result.error,
-            res
-        );
-        }
-    } catch (err) {
-        return response.sendServerErrorResponse(
-        "Error while activating job",
-        null,
-        err,
+  try {
+    const result = await JobService.activateJob(req);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Job activated successfully",
+        result,
         res
-        );
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while activatingssdewe job",
+        null,
+        result.error,
+        res
+      );
     }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while activating job",
+      null,
+      err,
+      res
+    );
+  }
+}
+
+async function getAllJobs(req, res) {
+  try {
+    const result = await JobService.getJobs();
+    if (result.status === 200) {
+      return response.sendSuccessResponse("Jobs fetched successfully", result, res);
+    } else {
+      return response.sendBadRequestResponse("Error while fetching jobs", null, result.error, res);
     }
+  }
+  catch (err) {
+    return response.sendServerErrorResponse("Error while fetching jobs", null, err, res);
+  }
+
+}
 
 module.exports = {
   createJob,
   activateJob,
+  getAllJobs,
 };

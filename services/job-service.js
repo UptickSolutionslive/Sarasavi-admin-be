@@ -3,6 +3,7 @@ const ItemModel = require("../models/item-model");
 const orderModel = require("../models/order-model");
 const InvoiceService = require("../services/invoice-service");
 const CustomerService = require("../services/customer-service");
+const OrderService = require("../services/order-service");
 
 async function createJob(req, res) {
   try {
@@ -24,36 +25,28 @@ async function activateJob(req) {
   try {
     const result = await JobModel.findByIdAndUpdate(jobId, activate);
     if (result) {
-      const job = await JobModel.findOne({ _id });
-      const order_No = orderModel.length + 1;
-      const order = new orderModel({
-        order_No,
-        job_id: job._id,
-      });
-      const orderResult = await order.save();
-      if (!orderResult) {
-        return { status: 400, error: "Error while saving order" };
-      } else {
-        reduceQuantity(job);
-        const Invoice = await InvoiceService.createInvoice(job);
-        const OrderedAmount = job.total - job.discount;
-        const cusId = job.customer.customerId;
-        const res = await CustomerService.updateOrderedAmount(cusId, OrderedAmount);
-        if (Invoice.status === 200) {
+      const job = await JobModel.findOne({ _id: jobId });
+      if(activate){
+        const SavedOrder = await OrderService.createOrder(job);
+        if (SavedOrder.status === 200) {
           return {
             status: 200,
             message: "Job activated successfully",
             data: result,
           };
-        } else {
+        }
+      }
+      else{
+        const deletedOrder = await OrderService.deleteOrderByJobId(jobId);
+        if (deletedOrder.status === 200) {
           return {
-            status: 400,
-            message: "Error while activating job",
-            data: null,
-            error: result.error,
+            status: 200,
+            message: "Job deactivated successfully",
+            data: result,
           };
         }
       }
+      
     } else {
       return {
         status: 400,
@@ -91,8 +84,17 @@ async function reduceQuantity(order) {
     f;
   }
 }
+async function getJobs(req, res) {
+  try {
+    const result = await JobModel.find().sort({ createdAt: -1 });
+    return { status: 200, result };
+  } catch (error) {
+    return { status: 400, error };
+  }
+}
 
 module.exports = {
   createJob,
   activateJob,
+  getJobs,
 };

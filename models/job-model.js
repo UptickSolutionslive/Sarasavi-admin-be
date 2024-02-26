@@ -86,7 +86,10 @@ const jobSchema = new Schema({
     isActive : {
         type : Boolean,
         default : false
-    }
+    },
+    discount: {
+        type: Number,
+    },
 
 });
 

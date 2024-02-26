@@ -7,6 +7,10 @@ router.route("/").post((req, res) => {
   JobController.createJob(req, res);
 });
 
+router.route("/").get((req, res) => {
+  JobController.getAllJobs(req, res);
+});
+
 router.route("/:id").patch((req, res) => {
   JobController.activateJob(req, res);
 });
