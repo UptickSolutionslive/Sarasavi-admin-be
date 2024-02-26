@@ -42,6 +42,6 @@ const grnSchema = new Schema({
     remark: {
         type: String,
     },
-});
+},{timestamps:true});
 
 module.exports = mongoose.model("grn", grnSchema);

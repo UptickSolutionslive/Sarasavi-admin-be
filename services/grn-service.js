@@ -18,7 +18,7 @@ async function saveGrn(req) {
 
 async function getGrn(req) {
     try {
-        const result = await GrnModel.find();
+        const result = await GrnModel.find().sort({createdAt:-1});
         return { status: 200, result };
     }
     catch (err) {
@@ -68,7 +68,7 @@ async function updateGrn(req) {
         const existingGrn = grn;
         const res = await reduceQuantity(existingGrn);
 
-    
+
 
         const result = await GrnModel.updateOne({
             _id: req.params.id
@@ -105,6 +105,8 @@ module.exports = {
     saveGrn,
     getGrn,
     updateGrn,
-    deleteGrn
+    deleteGrn,
+    updateQuantity,
+    reduceQuantity,
 
 }

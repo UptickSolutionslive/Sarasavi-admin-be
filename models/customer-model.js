@@ -29,7 +29,15 @@ const customerSchema = new Schema({
     creditLimit : {
         type : Number,
     },
-
-})
+    ordered_amount :{
+        type : Number,
+    },
+    paid_amount :{
+        type : Number,
+    },
+    balance_amount :{
+        type : Number,
+    },
+},{timestamps:true})
 
 module.exports = mongoose.model("customer",customerSchema);

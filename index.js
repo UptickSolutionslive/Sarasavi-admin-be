@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
-      
+
 
 // MongoDB connection
 const mongoDBUri = process.env.MONGO_URL;
@@ -39,22 +39,30 @@ db.once('open', () => {
 
 const customerRouter = require("./routes/customer-route");
 const categoryRouter = require("./routes/category-route");
-const itemRouter = require("./routes/item-route");  
+const itemRouter = require("./routes/item-route");
 const grnRouter = require("./routes/grn-route");
 const UserService = require("./services/user-service")
 const results = UserService.saveUser();
 const UserRouter = require('./routes/user-routes')
+const OrderRouter = require("./routes/order-route");
+const invoiceRouter = require("./routes/invoice-route");
+const receiptRouter = require("./routes/receipt-route");
+const jobRouter = require("./routes/job-routes");
+
+// const { startPaymentCheckCronJob } = require('./services/order-service');
+
 
 
 app.use("/customer", customerRouter);
 app.use("/category", categoryRouter);
 app.use("/item", itemRouter);
 app.use("/grn", grnRouter);
-app.use("/user",UserRouter)
+app.use("/order", OrderRouter);
+app.use("/invoice", invoiceRouter);
+app.use("/user", UserRouter)
+app.use("/receipt", receiptRouter);
+app.use("/job", jobRouter);
 
-
-
-app.use("/user",UserRouter)
 
 
 
