@@ -1,4 +1,4 @@
-let customer = require("../models/customer-model")
+let customer = require("../models/customer-model");
 
 async function SaveCustomer(req) {
 
@@ -23,18 +23,29 @@ async function SaveCustomer(req) {
 }
 
 async function getAllCustomers() {
-    try {
-        const result = await customer.find().sort({ createdAt: -1 });
-        if (result) {
-            return { status: 200, message: "Customers fetched successfully", data: result };
-        }
-        else {
-            return { status: 400, message: "Error while fetching customer", data: null, error: result.error };
-        }
-
-    } catch (err) {
-        return { status: 500, message: `Error while fetching customer ${err}`, error: err };
+  try {
+    const result = await customer.find().sort({ createdAt: -1 });
+    if (result) {
+      return {
+        status: 200,
+        message: "Customers fetched successfully",
+        data: result,
+      };
+    } else {
+      return {
+        status: 400,
+        message: "Error while fetching customer",
+        data: null,
+        error: result.error,
+      };
     }
+  } catch (err) {
+    return {
+      status: 500,
+      message: `Error while fetching customer ${err}`,
+      error: err,
+    };
+  }
 }
 
 async function updateCustomer(req) {
@@ -54,36 +65,91 @@ async function updateCustomer(req) {
     try {
         const result = await customer.findByIdAndUpdate(cusId, update);
 
-        if (result) {
-            return { status: 200, message: "Customer updated successfully", data: result };
-        } else {
-            return { status: 400, message: "Error while fetching customer", data: null, error: result.error };
-        }
-    } catch (err) {
-        return { status: 500, message: `Error while updating customer ${err}`, error: err };
+    if (result) {
+      return {
+        status: 200,
+        message: "Customer updated successfully",
+        data: result,
+      };
+    } else {
+      return {
+        status: 400,
+        message: "Error while fetching customer",
+        data: null,
+        error: result.error,
+      };
     }
+  } catch (err) {
+    return {
+      status: 500,
+      message: `Error while updating customer ${err}`,
+      error: err,
+    };
+  }
 }
 
 async function deleteCustomer(req) {
-    let userId = req.params.id;
-    const result = await customer.findByIdAndDelete(userId);
+  let userId = req.params.id;
+  const result = await customer.findByIdAndDelete(userId);
 
-    try {
-        if (result) {
-            return { status: 200, message: "Customer deleted successfully", data: result };
-        } else {
-            return { status: 400, message: "Error while deleting customer", data: null, error: result.error };
-        }
-    } catch (err) {
-        return { status: 500, message: `Error while deleting customer ${err}`, error: err };
+  try {
+    if (result) {
+      return {
+        status: 200,
+        message: "Customer deleted successfully",
+        data: result,
+      };
+    } else {
+      return {
+        status: 400,
+        message: "Error while deleting customer",
+        data: null,
+        error: result.error,
+      };
     }
+  } catch (err) {
+    return {
+      status: 500,
+      message: `Error while deleting customer ${err}`,
+      error: err,
+    };
+  }
 }
 
+async function updateOrderedAmount(ordered_amount, cusId) {
+  try {
+    const existingCustomer = await customer.findById(cusId);
+    const update = {
+      ordered_amount: existingCustomer.ordered_amount + ordered_amount,
+    };
+    const result = await customer.findByIdAndUpdate(cusId, update);
+    if (result) {
+      return {
+        status: 200,
+        message: "Customer updated successfully",
+        data: result,
+      };
+    } else {
+      return {
+        status: 400,
+        message: "Error while fetching customer",
+        data: null,
+        error: result.error,
+      };
+    }
+  } catch (err) {
+    return {
+      status: 500,
+      message: `Error while updating customer ${err}`,
+      error: err,
+    };
+  }
+}
 
 module.exports = {
-    SaveCustomer,
-    getAllCustomers,
-    updateCustomer,
-    deleteCustomer
-
-}
+  SaveCustomer,
+  getAllCustomers,
+  updateCustomer,
+  deleteCustomer,
+  updateOrderedAmount,
+};
