@@ -29,6 +29,15 @@ const customerSchema = new Schema({
     creditLimit : {
         type : Number,
     },
+    OrderedAmount : {
+        type : Number,
+    },
+    paidAmount : {
+        type : Number,
+    },
+    balance : {
+        type : Number,
+    },
 
 },{timestamps:true})
 
