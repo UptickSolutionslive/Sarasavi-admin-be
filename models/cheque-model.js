@@ -30,7 +30,11 @@ const chequeSchema = new Schema({
     remarks: {
         type: String,
     },
+    banked_by: {
+        type : String,
+    }
 
 
 }, { timestamps: true })
+
 module.exports = mongoose.model("cheque", chequeSchema);
