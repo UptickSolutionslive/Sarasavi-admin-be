@@ -18,6 +18,24 @@ async function getAllCheques(req, res) {
     }
 }
 
+async function updateCheque(req,res){
+    
+    try{
+        const result = await ChequeService.chequeBanked(req);
+        if(result.status === 200){
+            return response.sendSuccessResponse("cheque Updated Successfully",result,res);
+        }
+        else{
+            return response.sendBadRequestResponse("Error while updating cheque",null,result.error,res);
+        }
+    }catch(err){
+        console.log(err);
+        
+    }
+}
+
+
 module.exports = {
     getAllCheques,
+    updateCheque
 }   
