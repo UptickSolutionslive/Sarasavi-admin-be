@@ -1,4 +1,5 @@
 const chequeModel = require('../models/cheque-model');
+const CustomerModel = require('../models/customer-model');
 
 async function getAllCheques() {
     try {
@@ -27,13 +28,21 @@ async function getAllCheques() {
 }
 
 async function chequeBanked(req) {
-    console.log("chequeeee",req);
     let chequeId = req.params.id;
     const { status,banked_by } = req.body;
     const update = { status,banked_by };
+    const cheque = await chequeModel.findById(chequeId);
+
     try {
+        if(status === "banked"){
+           const Customer = await CustomerModel.findById(cheque.customer);
+            Customer.paidAmount = Customer.paidAmount + cheque.amount;
+            if (Customer.paidAmount >= Customer.orderedAmount) {
+                Customer.balance = Customer.paidAmount - Customer.orderedAmount;
+            }
+            await Customer.save();
+        }
         const result = await chequeModel.findByIdAndUpdate(chequeId, update);
-        console.log(result);
     
         if (result) {
           return {
