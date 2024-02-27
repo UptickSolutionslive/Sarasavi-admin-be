@@ -13,16 +13,8 @@ router.route("/:id").delete((req, res) => {
 router.route("/").get((req, res) => {
     controller.getAllOrders(req, res);
 })
-router.route("/activate/:id").put((req,res)=>{
-    controller.activateJob(req,res);
-})
-router.route("/activate/").get((req, res) => {
-    controller.getActivateJobs(req, res);
-})
 
-router.route("/deactivate/").get((req, res) => {
-    controller.getDeactivateJobs(req, res);
-})
+
 
 
 

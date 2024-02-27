@@ -2,24 +2,23 @@ let customer = require("../models/customer-model");
 
 async function SaveCustomer(req) {
 
+  try {
+    const result = await customer.create(req.body);
 
-    try {
-        const result = await customer.create(req.body);
-
-        if (result) {
-            return { status: 200, message: "Customer saved successfully", data: result };
-        }
-        else {
-            return { status: 400, message: "Error while saving customer", data: null, error: result.error };
-        }
-
-    } catch (err) {
-        if (err.code === 11000 && err.keyPattern && err.keyValue) {
-            return { status: 400, message: `Duplicate key error ${JSON.stringify(err.keyValue)}`, error: err };
-        } else {
-            return { status: 500, message: `Error while saving customer ${err}`, error: err };
-        }
+    if (result) {
+      return { status: 200, message: "Customer saved successfully", data: result };
     }
+    else {
+      return { status: 400, message: "Error while saving customer", data: null, error: result.error };
+    }
+
+  } catch (err) {
+    if (err.code === 11000 && err.keyPattern && err.keyValue) {
+      return { status: 400, message: `Duplicate key error ${JSON.stringify(err.keyValue)}`, error: err };
+    } else {
+      return { status: 500, message: `Error while saving customer ${err}`, error: err };
+    }
+  }
 }
 
 async function getAllCustomers() {
@@ -49,21 +48,22 @@ async function getAllCustomers() {
 }
 
 async function updateCustomer(req) {
-    let cusId = req.params.id;
-    const { name, mobileNo, email, address, cPerson, cMobileNo, remark, creditLimit } = req.body;
+  let cusId = req.params.id;
+  const { name, mobileNo, email, address, cPerson, cMobileNo, remark, creditLimit } = req.body;
 
-    const update = {
-        name,
-        mobileNo,
-        email,
-        address,
-        cPerson,
-        cMobileNo,
-        remark,
-        creditLimit
-    }
-    try {
-        const result = await customer.findByIdAndUpdate(cusId, update);
+  const update = {
+    name,
+    mobileNo,
+    email,
+    address,
+    cPerson,
+    cMobileNo,
+    remark,
+    creditLimit
+  }
+  try {
+    const result = await customer.findByIdAndUpdate(cusId, update);
+    console.log(result);
 
     if (result) {
       return {
@@ -116,13 +116,25 @@ async function deleteCustomer(req) {
   }
 }
 
-async function updateOrderedAmount(ordered_amount, cusId) {
+async function updateOrderedAmount(id, job) {
   try {
-    const existingCustomer = await customer.findById(cusId);
+    // Find the existing customer
+    const existingCustomer = await customer.findById(id);
+
+    // Calculate the updated ordered amount
+    const updatedOrderedAmount = existingCustomer.orderedAmount + job.total;
+
+    console.log("Updated ordered amount:", updatedOrderedAmount);
+
+
+    // Prepare the update object
     const update = {
-      ordered_amount: existingCustomer.ordered_amount + ordered_amount,
+      orderedAmount: updatedOrderedAmount,
     };
-    const result = await customer.findByIdAndUpdate(cusId, update);
+
+    // Update the customer
+    const result = await customer.findByIdAndUpdate(id, update);
+
     if (result) {
       return {
         status: 200,
@@ -130,18 +142,21 @@ async function updateOrderedAmount(ordered_amount, cusId) {
         data: result,
       };
     } else {
+      // Log the error message and return an appropriate response
+      console.error("Error while updating customer. Result:", result);
       return {
         status: 400,
-        message: "Error while fetching customer",
+        message: "Error while updating customer",
         data: null,
-        error: result.error,
       };
     }
-  } catch (err) {
+  } catch (error) {
+    // Log the error and return an appropriate response
+    console.error("Error updating ordered amount:", error);
     return {
       status: 500,
-      message: `Error while updating customer ${err}`,
-      error: err,
+      message: "Internal server error",
+      data: null,
     };
   }
 }

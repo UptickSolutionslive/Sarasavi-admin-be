@@ -29,13 +29,13 @@ const customerSchema = new Schema({
     creditLimit : {
         type : Number,
     },
-    ordered_amount :{
+    orderedAmount :{
         type : Number,
     },
-    paid_amount :{
+    paidAmount :{
         type : Number,
     },
-    balance_amount :{
+    balance :{
         type : Number,
     },
 },{timestamps:true})

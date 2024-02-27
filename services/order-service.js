@@ -2,24 +2,54 @@ const OrderModel = require('../models/order-model');
 const ItemModel = require('../models/item-model');
 const InvoiceService = require('../services/invoice-service')
 const SmsService = require('../services/sms-service')
+const customerModel = require('../models/customer-model');
+const CustomerService = require('../services/customer-service');
 const cron = require('node-cron');
 
 
 
 
-async function createOrder(req, res) {
-    console.log(req);
+async function createOrder(job) {
+
     try {
-        const order = new OrderModel(req.body);
-        console.log(req.body);
-        const result = await order.save();
+        const OrderLength = await OrderModel.find().countDocuments();
+        const order_No = "ORD" + (OrderLength + 1);
+        const order = new OrderModel({
+            order_No,
+            customer: job.customer,
+            item: job.item,
+            quantity: job.quantity,
+            total: job.total,
+            discount: job.discount,
+            date: job.date,
+            name: job.name,
+            additional_charges: job.additional_charges,
+            price: job.price,
+            remark: job.remark,
+            order_type: job.order_type,
+            isFast: job.isFast,
+            isUrgent: job.isUrgent,
+            isActive: true,
+            created_by: job.created_by,
+            delivery_type: job.delivery_type,
+            delivery_charges: job.delivery_charges,
+            job_id: job._id,
+        });
+        const result = await OrderModel.create(order);
+
         if (!result) {
             return { status: 400, error: "Error while saving order" };
         }
         else {
-            await reduceQuantity(req.body);
+            await reduceQuantity(job);
             const invoice = await InvoiceService.createInvoice(result);
-            const sms = await SmsService.sendSms(req.body);
+            const sms = await SmsService.sendSms(job);
+          
+            const res = await CustomerService.updateOrderedAmount(job.customer.customerId, job);
+            if (res.status === 200) {
+                return { status: 200, result };
+            }
+            
             if (invoice.status === 200) {
                 return { status: 200, result };
             }
@@ -36,7 +66,7 @@ async function createOrder(req, res) {
 }
 async function getAllOrders(req, res) {
     try {
-        const result = await OrderModel.find().sort({ order_No:1 });
+        const result = await OrderModel.find().sort({ createdAt: -1 });
         return { status: 200, result };
     }
     catch (err) {
@@ -47,7 +77,7 @@ async function getAllOrders(req, res) {
 
 async function getDeactivateJobs() {
     try {
-        const result = await OrderModel.find({isActive:false}).sort({createdAt:-1},);
+        const result = await OrderModel.find({ isActive: false }).sort({ createdAt: -1 },);
         if (result) {
             return { status: 200, message: "Jobs fetched successfully", data: result };
         }
@@ -62,7 +92,7 @@ async function getDeactivateJobs() {
 
 async function getActiveJobs() {
     try {
-        const result = await OrderModel.find({isActive:true}).sort({order_No:1},);
+        const result = await OrderModel.find({ isActive: true }).sort({ order_No: 1 },);
         if (result) {
             return { status: 200, message: "Jobs fetched successfully", data: result };
         }
@@ -111,21 +141,21 @@ async function startPaymentCheckCronJob() {
 }
 
 
-async function activateJob(req){
+async function activateJob(req) {
     let jobId = req.params.id;
-    const {isActive} = req.body;
+    const { isActive } = req.body;
 
-    const activate = {isActive}
+    const activate = { isActive }
 
-    try{
+    try {
         const result = await OrderModel.findByIdAndUpdate(jobId, activate);
 
-        if(result){
-            return {status:200,message:"Job Activates successfully",data:result};
-        }else{
-            return {status:400,message:"Error while fetching Job",data:null,error:result.error};
+        if (result) {
+            return { status: 200, message: "Job Activates successfully", data: result };
+        } else {
+            return { status: 400, message: "Error while fetching Job", data: null, error: result.error };
         }
-    }catch(err){
+    } catch (err) {
         return { status: 500, message: `Error while updating Job ${err}`, error: err };
     }
 }
@@ -135,10 +165,23 @@ async function deleteOrder(req) {
     const result = await orderModel.findByIdAndDelete(userId);
 
     try {
-        if(result){
-            return {status:200,message:"Order deleted successfully",data:result};
-        }else{
-            return {status:400,message:"Error while deleting order",data:null,error:result.error};
+        if (result) {
+            return { status: 200, message: "Order deleted successfully", data: result };
+        } else {
+            return { status: 400, message: "Error while deleting order", data: null, error: result.error };
+        }
+    } catch (err) {
+        return { status: 500, message: `Error while deleting order ${err}`, error: err };
+    }
+}
+
+async function deleteOrderByJobId(id) {
+    const result = await OrderModel.findByIdAndDelete(id);
+    try {
+        if (result) {
+            return { status: 200, message: "Order deleted successfully", data: result };
+        } else {
+            return { status: 400, message: "Error while deleting order", data: null, error: result.error };
         }
     } catch (err) {
         return { status: 500, message: `Error while deleting order ${err}`, error: err };
@@ -152,5 +195,6 @@ module.exports = {
     activateJob,
     getActiveJobs,
     getDeactivateJobs,
-    deleteOrder
+    deleteOrder,
+    deleteOrderByJobId,
 }

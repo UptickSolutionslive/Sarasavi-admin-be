@@ -1,5 +1,6 @@
 const ReceiptModel = require('../models/receipt-model');
 const CustomerModel = require('../models/customer-model');
+const chequesModel = require('../models/cheque-model');
 
 // async function createReceipt(receipt) {
 
@@ -38,12 +39,29 @@ const CustomerModel = require('../models/customer-model');
 async function createReceipt(receipt) {
     try {
         const result = await ReceiptModel.create(receipt);
-        const Customer = await CustomerModel.findById(receipt.customer);
-        Customer.paidAmount = Customer.paidAmount + receipt.receipt_amount;
-        if (Customer.paidAmount >= Customer.OrderedAmount) {
-            Customer.balance = Customer.paidAmount - Customer.OrderedAmount;
+        if (receipt.paymentMethod === "cheque") {
+            const cheque = await chequesModel.create({
+                cheque_no: receipt.chequeNo,
+                bank: receipt.bank,
+                amount: receipt.receipt_amount,
+                date: receipt.chequeDate,
+                customer: receipt.customer,
+                status: "pending",
+                remarks: receipt.remarks
+            });
+            return { status: 200, result };
         }
-        return { status: 200, result };
+        else {
+            const Customer = await CustomerModel.findById(receipt.customer);
+            Customer.paidAmount = Customer.paidAmount + receipt.receipt_amount;
+            if (Customer.paidAmount >= Customer.orderedAmount) {
+                Customer.balance = Customer.paidAmount - Customer.orderedAmount;
+            }
+            await Customer.save();
+            return { status: 200, result };
+        }
+
+
     }
     catch (err) {
         return { status: 400, error: err };
