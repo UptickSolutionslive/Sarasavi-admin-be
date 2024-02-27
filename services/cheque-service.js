@@ -29,13 +29,13 @@ async function getAllCheques() {
 
 async function chequeBanked(req) {
     let chequeId = req.params.id;
-    const { status,banked_by } = req.body;
-    const update = { status,banked_by };
+    const { status, banked_by } = req.body;
+    const update = { status, banked_by };
     const cheque = await chequeModel.findById(chequeId);
 
     try {
-        if(status === "banked"){
-           const Customer = await CustomerModel.findById(cheque.customer);
+        if (status === "banked") {
+            const Customer = await CustomerModel.findById(cheque.customer);
             Customer.paidAmount = Customer.paidAmount + cheque.amount;
             if (Customer.paidAmount >= Customer.orderedAmount) {
                 Customer.balance = Customer.paidAmount - Customer.orderedAmount;
@@ -43,29 +43,29 @@ async function chequeBanked(req) {
             await Customer.save();
         }
         const result = await chequeModel.findByIdAndUpdate(chequeId, update);
-    
+
         if (result) {
-          return {
-            status: 200,
-            message: "cheque status updated successfully",
-            data: result,
-          };
+            return {
+                status: 200,
+                message: "cheque status updated successfully",
+                data: result,
+            };
         } else {
-          return {
-            status: 400,
-            message: "Error while fetching cheque",
-            data: null,
-            error: result.error,
-          };
+            return {
+                status: 400,
+                message: "Error while fetching cheque",
+                data: null,
+                error: result.error,
+            };
         }
-      } catch (err) {
+    } catch (err) {
         return {
-          status: 500,
-          message: `Error while updating cheque ${err}`,
-          error: err,
+            status: 500,
+            message: `Error while updating cheque ${err}`,
+            error: err,
         };
-      }
-  }
+    }
+}
 
 module.exports = {
     getAllCheques,
