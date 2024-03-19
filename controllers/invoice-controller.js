@@ -32,7 +32,23 @@ async function updateInvoice(req, res) {
     }
 }
 
+async function getInvoiceByCustomerId(req, res) {
+    try {
+        const result = await InvoiceService.getInvoiceByCustomerId(req.params.id);
+        if (result.status === 200) {
+            return response.sendSuccessResponse("Invoices retrieved successfully", result, res);
+        }
+        else {
+            return response.sendBadRequestResponse("Error while retrieving invoices", null, result.error, res);
+        }
+    }
+    catch (err) {
+        return response.sendServerErrorResponse("Error while retrieving invoices", null, err, res);
+    }
+}
+
 module.exports = {
     getAllInvoices,
     updateInvoice,
+    getInvoiceByCustomerId,
 }

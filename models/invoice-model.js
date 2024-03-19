@@ -20,6 +20,16 @@ const invoiceSchema = new Schema({
     discount: {
         type: Number,
     },
+    total: {
+        type: Number,
+    },
+    paidAmount: {
+        type: Number,
+    },
+    isCompleted: {
+        type: Boolean,
+        default: false,
+    },
    
 
 },{timestamps:true})

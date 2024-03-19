@@ -10,6 +10,9 @@ router.route("/").get((req, res) => {
 router.route("/:id").patch((req, res) => {
     controller.updateInvoice(req, res);
 })
+router.route("/customer/:id").get((req, res) => {
+    controller.getInvoiceByCustomerId(req, res);
+})
 
 
 
