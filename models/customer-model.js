@@ -38,6 +38,9 @@ const customerSchema = new Schema({
     balance :{
         type : Number,
     },
+    paymentType :{
+        type : String,
+    },
 },{timestamps:true})
 
 module.exports = mongoose.model("customer",customerSchema);

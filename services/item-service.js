@@ -3,7 +3,6 @@ const ItemModel = require('../models/item-model');
 
 async function saveItem(req) {
     try {
-        req.body.available_quantity= req.body.starting_quantity;
         const item = new ItemModel(req.body);
         const result = await item.save();
         return { status: 200, result };
