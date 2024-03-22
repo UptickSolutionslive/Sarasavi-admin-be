@@ -54,7 +54,7 @@ async function updateInvoice(req) {
           discount: req.body.discount,
         }
       );
-      
+
       if (result != null) {
         const result = await InvoiceModel.updateOne(
           {
@@ -82,10 +82,15 @@ async function getInvoiceByCustomerId(customerId) {
     const OrderList = await OrderModel.find({
       "customer.customerId": customerId,
     });
+
     const invoiceList = [];
+    if (OrderList.length == 0) {
+      return { status: 200, invoiceList };
+    }
     for (let i = 0; i < OrderList.length; i++) {
       const invoice = await InvoiceModel.findOne({
         order_id: OrderList[i]._id,
+        isCompleted: false,
       });
       if (invoice != null) {
         invoiceList.push(invoice);
@@ -94,8 +99,26 @@ async function getInvoiceByCustomerId(customerId) {
     if (invoiceList.length > 0) {
       return { status: 200, invoiceList };
     } else {
-      return { status: 400, error: "Error while retrieving invoices" };
+      return { status: 200, invoiceList };
     }
+  } catch (err) {
+    return err;
+  }
+}
+async function updateInvoice(req) {
+  try {
+    console.log(req.body);
+    for (let i = 0; i < req.body.length; i++) {
+      const invoice = await InvoiceModel.findById(req.body[i]._id);
+      const res = await InvoiceModel.findByIdAndUpdate(req.body[i]._id, {
+        paidAmount: req.body[i].paidAmount,
+        isCompleted: invoice.total === req.body[i].paidAmount,
+      });
+      if (!res) {
+        return { status: 400, error: "Error while updating invoice" };
+      }
+    }
+    return { status: 200, message: "Invoice updated successfully" };
   } catch (err) {
     return err;
   }
@@ -106,4 +129,5 @@ module.exports = {
   getAllInvoices,
   updateInvoice,
   getInvoiceByCustomerId,
+  updateInvoice,
 };
