@@ -14,6 +14,10 @@ router.route("/").get((req, res) => {
     controller.getAllOrders(req, res);
 })
 
+router.route("/:id").put((req, res) => {
+    controller.updateOrder(req,res);
+})
+
 
 
 
