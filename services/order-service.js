@@ -188,6 +188,84 @@ async function deleteOrderByJobId(id) {
     }
 }
 
+
+
+async function updateOrder(req) {
+    let orderId = req.params.id;
+    const {
+      name,
+      date,
+      customer,
+      item,
+      quantity,
+      price,
+      total,
+      remark,
+      created_by,
+      order_type,
+      delivery_type,
+      isUrgent,
+      isFast,
+      additional_charges,
+      discount,
+      delivery_charges,
+      paid_amount,
+      designBy,
+      isActive,
+      job_id,
+    } = req.body;
+  
+    const update = {
+      name,
+      date,
+      customer,
+      item,
+      quantity,
+      price,
+      total,
+      remark,
+      created_by,
+      order_type,
+      delivery_type,
+      isUrgent,
+      isFast,
+      additional_charges,
+      discount,
+      delivery_charges,
+      paid_amount,
+      designBy,
+      isActive,
+      job_id,
+    };
+  
+    try {
+      const result = await OrderModel.findByIdAndUpdate(orderId, update);
+      console.log(result);
+  
+      if (result) {
+        return {
+          status: 200,
+          message: "Order updated successfully",
+          data: result,
+        };
+      } else {
+        return {
+          status: 400,
+          message: "Error while fetching order",
+          data: null,
+          error: result.error,
+        };
+      }
+    } catch (err) {
+      return {
+        status: 500,
+        message: `Error while updating order ${err}`,
+        error: err,
+      };
+    }
+  }
+  
+
 module.exports = {
     createOrder,
     getAllOrders,
@@ -197,4 +275,5 @@ module.exports = {
     getDeactivateJobs,
     deleteOrder,
     deleteOrderByJobId,
+    updateOrder
 }

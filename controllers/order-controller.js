@@ -98,11 +98,28 @@ async function deleteOrder(req,res){
     }
 }
 
+async function updateOrder(req,res){
+    
+    try{
+        const result = await OrderService.updateOrder(req);
+        if(result.status === 200){
+            return response.sendSuccessResponse("order Updated Successfully",result,res);
+        }
+        else{
+            return response.sendBadRequestResponse("Error while updating order",null,result.error,res);
+        }
+    }catch(err){
+        console.log(err);
+        
+    }
+}
+
 module.exports = {
     createOrder,
     getAllOrders,
     activateJob,
     getActivateJobs,
     getDeactivateJobs,
-    deleteOrder
+    deleteOrder,
+    updateOrder
 }
