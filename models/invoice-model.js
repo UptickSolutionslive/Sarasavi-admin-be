@@ -26,6 +26,9 @@ const invoiceSchema = new Schema({
     paidAmount: {
         type: Number,
     },
+    balance: {
+        type: Number,
+    },
     isCompleted: {
         type: Boolean,
         default: false,

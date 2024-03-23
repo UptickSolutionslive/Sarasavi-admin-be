@@ -11,6 +11,7 @@ async function createInvoice(order) {
       discount: 0,
       total: order.total,
       paidAmount: 0,
+      balance: order.total,
       isCompleted: false,
     });
     const result = await invoice.save();
@@ -63,6 +64,7 @@ async function updateInvoice(req) {
           {
             discount: req.body.discount,
             total: invoice.total - req.body.discount,
+            balance: invoice.total - req.body.discount,
           }
         );
         if (result != null) {
@@ -105,20 +107,22 @@ async function getInvoiceByCustomerId(customerId) {
     return err;
   }
 }
-async function updateInvoice(req) {
+async function updateInvoice(invoice) {
   try {
-    console.log(req.body);
-    for (let i = 0; i < req.body.length; i++) {
-      const invoice = await InvoiceModel.findById(req.body[i]._id);
-      const res = await InvoiceModel.findByIdAndUpdate(req.body[i]._id, {
-        paidAmount: req.body[i].paidAmount,
-        isCompleted: invoice.total === req.body[i].paidAmount,
+    console.log("invoice", invoice.length);
+    for (let i = 0; i < invoice.length; i++) {
+      const exInvoice = await InvoiceModel.findById(invoice[i].inv_id);
+      console.log("ssss", exInvoice);
+      const res = await InvoiceModel.findByIdAndUpdate(invoice[i].inv_id, {
+        paidAmount: exInvoice.paidAmount + invoice[i].paidAmount,
+        balance: exInvoice.balance - invoice[i].paidAmount,
+        isCompleted: exInvoice.total === invoice[i].paidAmount || exInvoice.balance === invoice[i].paidAmount ? true : false,
       });
       if (!res) {
         return { status: 400, error: "Error while updating invoice" };
       }
     }
-    return { status: 200, message: "Invoice updated successfully" };
+    return { status: 200, message: "Invoices updated successfully" };
   } catch (err) {
     return err;
   }

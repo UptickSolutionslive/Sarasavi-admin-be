@@ -1,7 +1,7 @@
-const ReceiptModel = require('../models/receipt-model');
-const CustomerModel = require('../models/customer-model');
-const chequesModel = require('../models/cheque-model');
-
+const ReceiptModel = require("../models/receipt-model");
+const CustomerModel = require("../models/customer-model");
+const chequesModel = require("../models/cheque-model");
+const InvoiceService = require("./invoice-service");
 // async function createReceipt(receipt) {
 
 //     try {
@@ -29,7 +29,6 @@ const chequesModel = require('../models/cheque-model');
 //             }
 //         }
 
-
 //     } catch (error) {
 //         console.log(error);
 //         throw new Error(error);
@@ -37,51 +36,52 @@ const chequesModel = require('../models/cheque-model');
 
 // }
 async function createReceipt(receipt) {
-    try {
-        const result = await ReceiptModel.create(receipt);
-        if (receipt.paymentMethod === "cheque") {
-            const cheque = await chequesModel.create({
-                cheque_no: receipt.chequeNo,
-                bank: receipt.bank,
-                amount: receipt.receipt_amount,
-                date: receipt.chequeDate,
-                customer: receipt.customer,
-                status: "pending",
-                remarks: receipt.remarks
-            });
-            return { status: 200, result };
-        }
-        else {
-            const Customer = await CustomerModel.findById(receipt.customer);
-            Customer.paidAmount = Customer.paidAmount + receipt.receipt_amount;
-            if (Customer.paidAmount >= Customer.orderedAmount) {
-                Customer.balance = Customer.paidAmount - Customer.orderedAmount;
-            }
-            await Customer.save();
-            return { status: 200, result };
-        }
+  try {
+    const newReceipt = new ReceiptModel(receipt);
+    const result = await newReceipt.save();
 
-
+    if (receipt.paymentMethod === "cheque") {
+      const cheque = await chequesModel.create({
+        cheque_no: receipt.chequeNo,
+        bank: receipt.bank,
+        amount: receipt.receipt_amount,
+        date: receipt.chequeDate,
+        customer: receipt.customer,
+        status: "pending",
+        remarks: receipt.remarks,
+      });
+      const result = await InvoiceService.updateInvoice(receipt.invoice);
+      return { status: 200, result };
+    } else {
+      const Customer = await CustomerModel.findById(receipt.customer);
+      // Customer.paidAmount = Customer.paidAmount + receipt.receipt_amount;
+      Customer.walletBalance = Customer.walletBalance + receipt.walletBalance;
+      const result = await InvoiceService.updateInvoice(receipt.invoice);
+      // if (Customer.paidAmount >= Customer.orderedAmount) {
+      //     Customer.balance = Customer.paidAmount - Customer.orderedAmount;
+      // }
+      //   await Customer.save();
+      if (result.status === 400) {
+        return { status: 400, error: result.error };
+      }
+      return { status: 200, result };
     }
-    catch (err) {
-        return { status: 400, error: err };
-
-    }
-
-
-
+  } catch (err) {
+    return { status: 400, error: err };
+  }
 }
 async function getReceipts() {
-    try {
-        const result = await ReceiptModel.find().sort({ createdAt: -1 });
-        return { status: 200, result };
-    } catch (error) {
-        return { status: 400, error };
-    }
+  try {
+    const result = await ReceiptModel.find()
+      .sort({ createdAt: -1 })
+      .populate("invoice");
+    return { status: 200, result };
+  } catch (error) {
+    return { status: 400, error };
+  }
 }
-
 
 module.exports = {
-    createReceipt,
-    getReceipts,
-}
+  createReceipt,
+  getReceipts,
+};
