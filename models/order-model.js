@@ -52,7 +52,6 @@ const orderSchema = new Schema({
     },
     created_by: {
         type: String,
-        required: true,
     },
     order_type: {
         type: String,
