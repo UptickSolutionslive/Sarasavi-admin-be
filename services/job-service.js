@@ -28,7 +28,7 @@ async function createJob(req, res) {
     }
 
     // Now, newJobNo holds the new job number
-    req.body.job_No = newJobNo;
+    req.body.job_No = "#JB141";
 
     const job = new JobModel(req.body);
     const result = await job.save();
