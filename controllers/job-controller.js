@@ -68,19 +68,57 @@ async function getAllJobs(req, res) {
   try {
     const result = await JobService.getJobs();
     if (result.status === 200) {
-      return response.sendSuccessResponse("Jobs fetched successfully", result, res);
+      return response.sendSuccessResponse(
+        "Jobs fetched successfully",
+        result,
+        res
+      );
     } else {
-      return response.sendBadRequestResponse("Error while fetching jobs", null, result.error, res);
+      return response.sendBadRequestResponse(
+        "Error while fetching jobs",
+        null,
+        result.error,
+        res
+      );
     }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while fetching jobs",
+      null,
+      err,
+      res
+    );
   }
-  catch (err) {
-    return response.sendServerErrorResponse("Error while fetching jobs", null, err, res);
-  }
-
 }
-
+async function deletedJob(req, res) {
+  try {
+    const result = await JobService.deleteJob(req);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Job deleted successfully",
+        result,
+        res
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while deleting job",
+        null,
+        result.error,
+        res
+      );
+    }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while deleting job",
+      null,
+      err,
+      res
+    );
+  }
+}
 module.exports = {
   createJob,
   activateJob,
   getAllJobs,
+  deletedJob,
 };

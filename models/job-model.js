@@ -1,95 +1,97 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const jobSchema = new Schema({
+const jobSchema = new Schema(
+  {
     job_No: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     date: {
-        type: Date,
-        required: true,
+      type: Date,
+      required: true,
     },
     customer: {
-        customerId: {
-            type: Schema.Types.ObjectId,
-            ref: 'customer',
-            required: true,
-        },
-        cNumber: {
-            type: String,
-            required: true,
-        },
-        cName: {
-            type: String,
-            required: true,
-        }
+      customerId: {
+        type: Schema.Types.ObjectId,
+        ref: "customer",
+        required: true,
+      },
+      cNumber: {
+        type: String,
+        required: true,
+      },
+      cName: {
+        type: String,
+        required: true,
+      },
     },
     item: {
-        type: Schema.Types.ObjectId,
-        ref: 'item',
-        required: true,
+      type: Schema.Types.ObjectId,
+      ref: "item",
+      required: true,
     },
     quantity: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     price: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     total: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     remark: {
-        type: String,
+      type: String,
     },
     created_by: {
-        type: String,
+      type: String,
     },
     order_type: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     delivery_type: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     isUrgent: {
-        type: Boolean,
+      type: Boolean,
     },
     isFast: {
-        type: Boolean,
+      type: Boolean,
     },
     additional_charges: {
-        type: Number,
+      type: Number,
     },
     discount: {
-        type: Number,
+      type: Number,
     },
     delivery_charges: {
-        type: Number,
+      type: Number,
     },
     paid_amount: {
-        type: Number,
+      type: Number,
     },
-    designBy:{
-        type: String,
+    designBy: {
+      type: String,
     },
-    isActive : {
-        type : Boolean,
-        default : false
+    isActive: {
+      type: Boolean,
+      default: false,
     },
     discount: {
-        type: Number,
+      type: Number,
     },
-
-});
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("job", jobSchema);
