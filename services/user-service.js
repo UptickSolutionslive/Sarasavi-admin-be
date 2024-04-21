@@ -4,46 +4,34 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 dotenv.config();
 
-async function saveUser() {
-    const { USER_NAMES, USER_PASSWORD, USER_ROLES } = process.env;
-
-    // Splitting the comma-separated values into arrays
-    const usernames = USER_NAMES.split(',');
-    const passwords = USER_PASSWORD.split(',');
-    const roles = USER_ROLES.split(',');
-    // const userRoles = ['staff', 'admin', 'manager'];
-
-
+async function registerUser(username, email, password, role) {
     try {
-        // Assuming same length for usernames and passwords, and they correspond to each other
-        for (let i = 0; i < usernames.length; i++) {
-            const existingUser = await userModel.findOne({ username: usernames[i] });
-            if (existingUser) {
-                console.log(`User ${usernames[i]} already exists, skipping insertion.`);
-                continue;
-            }
-
-            const hashedPassword = await bcrypt.hash(passwords[i], 10);
-
-            const newUser = new userModel({ 
-                username: usernames[i],
-                password: hashedPassword,
-                role: roles[i]
-            });
-
-            const result = await newUser.save();
-            if (!result) {
-                console.error(`Failed to save user ${usernames[i]}`);
-            } else {
-                console.log(`User ${usernames[i]} saved successfully.`);
-            }
+        const existingUser = await userModel.findOne({ username });
+        if (existingUser) {
+            throw new Error(`Username '${username}' already exists`);
         }
-        return { status: 200, message: "Users Saved Successfully" };
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new userModel({ 
+            username,
+            email,
+            password: hashedPassword,
+            role
+        });
+
+        const result = await newUser.save();
+        if (!result) {
+            throw new Error(`Failed to save user ${username}`);
+        }
+
+        return { status: 200, message: `User ${username} registered successfully.` };
     } catch (err) {
-        console.error("Error saving users:", err);
-        return { status: 500, error: err };
+        console.error("Error registering user:", err);
+        return { status: 500, error: err.message };
     }
 }
+
 
 // Login function to authenticate user and generate token
 async function login(req) {
@@ -68,6 +56,8 @@ async function login(req) {
     }
 }
 
+
+
 function generateToken(username, role) {
     const payload = {
         username: username,
@@ -83,8 +73,52 @@ function generateToken(username, role) {
 }
 
 
+
+async function getAllUsers() {
+    try {
+        const users = await userModel.find();
+        return { status: 200, users };
+    } catch (error) {
+        console.error("Error getting all users:", error);
+        return { status: 500, error: error.message };
+    }
+}
+
+
+async function deleteUserById(userId) {
+    try {
+        const deletedUser = await userModel.findByIdAndDelete(userId);
+        if (!deletedUser) {
+            throw new Error(`User with ID '${userId}' not found`);
+        }
+        return { status: 200, message: `User with ID '${userId}' deleted successfully` };
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return { status: 500, error: error.message };
+    }
+}
+
+async function updateUserById(userId, updates) {
+    try {
+        const updatedUser = await userModel.findByIdAndUpdate(userId, updates, { new: true });
+        if (!updatedUser) {
+            throw new Error(`User with ID '${userId}' not found`);
+        }
+        return { status: 200, message: `User with ID '${userId}' updated successfully`, user: updatedUser };
+    } catch (error) {
+        console.error("Error updating user:", error);
+        return { status: 500, error: "Error updating user" };
+    }
+}
+
+
+
+
 module.exports = {
-    saveUser,
+    registerUser,
+    deleteUserById,
+    updateUserById,
+    getAllUsers,
     generateToken,
     login
 };
