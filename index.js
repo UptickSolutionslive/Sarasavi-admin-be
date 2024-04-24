@@ -42,7 +42,6 @@ const categoryRouter = require("./routes/category-route");
 const itemRouter = require("./routes/item-route");
 const grnRouter = require("./routes/grn-route");
 const UserService = require("./services/user-service")
-const results = UserService.saveUser();
 const UserRouter = require('./routes/user-routes')
 const OrderRouter = require("./routes/order-route");
 const invoiceRouter = require("./routes/invoice-route");
