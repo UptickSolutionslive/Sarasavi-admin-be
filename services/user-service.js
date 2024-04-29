@@ -100,6 +100,12 @@ async function deleteUserById(userId) {
 
 async function updateUserById(userId, updates) {
     try {
+        // Check if the updates include the password field
+        if (updates.password) {
+            // Hash the new password
+            updates.password = await bcrypt.hash(updates.password, 10);
+        }
+
         const updatedUser = await userModel.findByIdAndUpdate(userId, updates, { new: true });
         if (!updatedUser) {
             throw new Error(`User with ID '${userId}' not found`);

@@ -8,19 +8,15 @@ router.route("/login").post((req, res) => {
 router.route("/registerUser").post((req, res) => {
     controller.registerUser(req, res);
 })
-router.route("/getAllUsers").get((req, res) => {
+router.route("/").get((req, res) => {
     controller.getAllUsers(req, res);
 });
 
-router.route("/deleteUser/:userId").delete((req, res) => {
-    const userId = req.params.userId;
-    req.body.userId = userId; 
+router.route("/:userId").delete((req, res) => {
     controller.deleteUser(req, res);
 });
 
-router.route("/updateUser/:userId").put((req, res) => {
-    const userId = req.params.userId;
-    req.body.userId = userId; 
+router.route("/:userId").put((req, res) => { 
     controller.updateUser(req, res);
 });
 
