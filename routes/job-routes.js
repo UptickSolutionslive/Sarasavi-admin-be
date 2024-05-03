@@ -19,4 +19,8 @@ router.route("/:id").delete((req, res) => {
   JobController.deletedJob(req, res);
 });
 
+router.route("/:id").put((req, res) => {
+  JobController.updateJob(req, res);
+});
+
 module.exports = router;

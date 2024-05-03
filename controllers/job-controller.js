@@ -116,9 +116,30 @@ async function deletedJob(req, res) {
     );
   }
 }
+
+async function updateJob(req, res) {
+  try {
+    const result = await JobService.updateJob(req, res);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(result.message, result.job, res);
+    } else {
+      return response.sendErrorResponse(result.status, result.error, res);
+    }
+  } catch (err) {
+    console.error("Error updating job:", err);
+    return response.sendServerErrorResponse(
+      "Error updating job",
+      null,
+      err,
+      res
+    );
+  }
+}
+
 module.exports = {
   createJob,
   activateJob,
   getAllJobs,
   deletedJob,
+  updateJob,
 };

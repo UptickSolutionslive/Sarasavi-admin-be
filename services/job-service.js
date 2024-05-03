@@ -7,12 +7,8 @@ const OrderService = require("../services/order-service");
 
 async function createJob(req, res) {
   try {
-    // Assuming JobModel is your Mongoose model for the jobs collection
-
-    // First, find the last created job
     const lastJob = await JobModel.findOne().sort({ createdAt: -1 });
 
-    // If there's no existing job, start job number from 1
     let newJobNo = 1;
 
     if (lastJob) {
@@ -134,9 +130,27 @@ async function deleteJob(req, res) {
   }
 }
 
+async function updateJob(req, res) {
+  try {
+    const jobId = req.params.id;
+    const updates = req.body;
+    const result = await JobModel.findByIdAndUpdate(jobId, updates, {
+      new: true,
+    });
+    if (result) {
+      return { status: 200, result, message: "Job Updated Successfully" };
+    } else {
+      return { status: 400, error: "Error while updating job" };
+    }
+  } catch (err) {
+    return err;
+  }
+}
+
 module.exports = {
   createJob,
   activateJob,
   getJobs,
   deleteJob,
+  updateJob,
 };
