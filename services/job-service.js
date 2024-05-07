@@ -31,7 +31,16 @@ async function createJob(req, res) {
     if (!result) {
       return { status: 400, error: "Error while saving job" };
     } else {
-      return { status: 200, result };
+      const updatedItem = await reduceQuantity(result);
+      if (updatedItem.status === 200) {
+        return { status: 200, result, message: "Job Created Successfully" };
+      } else {
+        return {
+          status: 400,
+          error: "Error while reducing quantity",
+          data: updatedItem.error,
+        };
+      }
     }
   } catch (err) {
     console.log(err);
@@ -82,26 +91,6 @@ async function activateJob(req) {
   }
 }
 
-async function reduceQuantity(order) {
-  try {
-    const Item = await ItemModel.findOne({
-      _id: order.item,
-    });
-    const result = await ItemModel.updateOne(
-      {
-        _id: order.item,
-      },
-      { available_quantity: Item.available_quantity - order.quantity }
-    );
-    if (!result) {
-      return { status: 400, error: "Error while reducing quantity" };
-    }
-    return { status: 200, result };
-  } catch (err) {
-    return err;
-    f;
-  }
-}
 async function getJobs(req, res) {
   try {
     const result = await JobModel.find().sort({ createdAt: -1 });
@@ -133,18 +122,61 @@ async function deleteJob(req, res) {
 async function updateJob(req, res) {
   try {
     const jobId = req.params.id;
-    const updates = req.body;
-    const result = await JobModel.findByIdAndUpdate(jobId, updates, {
-      new: true,
-    });
-    if (result) {
-      return { status: 200, result, message: "Job Updated Successfully" };
-    } else {
-      return { status: 400, error: "Error while updating job" };
+    const updateItemQuantity = await updateQuantity(jobId);
+    if (updateItemQuantity.status === 200) {
+      const updates = req.body;
+      const result = await JobModel.findByIdAndUpdate(jobId, updates, {
+        new: true,
+      });
+      const updatedItem = await reduceQuantity(result);
+      if (updatedItem.status === 200) {
+        return { status: 200, result, message: "Job Updated Successfully" };
+      } else {
+        return {
+          status: 400,
+          error: "Error while reducing quantity",
+          data: updatedItem.error,
+        };
+      }
     }
   } catch (err) {
     return err;
   }
+}
+
+async function reduceQuantity(order) {
+  try {
+    const Item = await ItemModel.findOne({
+      _id: order.item,
+    });
+    const result = await ItemModel.updateOne(
+      {
+        _id: order.item,
+      },
+      { available_quantity: Item.available_quantity - order.quantity }
+    );
+    if (!result) {
+      return { status: 400, error: "Error while reducing quantity" };
+    }
+    return { status: 200, result };
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateQuantity(jobId) {
+  const exJob = await JobModel.findById(jobId);
+  const exItem = await ItemModel.findById(exJob.item);
+  const result = await ItemModel.updateOne(
+    {
+      _id: exJob.item,
+    },
+    { available_quantity: exItem.available_quantity + exJob.quantity }
+  );
+  if (!result) {
+    return { status: 400, error: "Error while updating quantity" };
+  }
+  return { status: 200, result };
 }
 
 module.exports = {

@@ -36,7 +36,7 @@ async function createOrder(job) {
     if (!result) {
       return { status: 400, error: "Error while saving order" };
     } else {
-      await reduceQuantity(job);
+      // await reduceQuantity(job);
       const invoice = await InvoiceService.createInvoice(result);
       const sms = await SmsService.sendSms(job);
 
