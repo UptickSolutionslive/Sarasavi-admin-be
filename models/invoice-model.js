@@ -23,6 +23,9 @@ const invoiceSchema = new Schema({
     total: {
         type: Number,
     },
+    delivery_charges: {
+        type: Number,
+    },
     paidAmount: {
         type: Number,
     },
