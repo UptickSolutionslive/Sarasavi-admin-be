@@ -49,6 +49,7 @@ const receiptRouter = require("./routes/receipt-route");
 const jobRouter = require("./routes/job-routes");
 const chequeRouter = require("./routes/cheque-route");
 const reportRouter = require("./routes/report-route");
+const routeRouter = require("./routes/route-route");
 
 // const { startPaymentCheckCronJob } = require('./services/order-service');
 
@@ -65,6 +66,7 @@ app.use("/receipt", receiptRouter);
 app.use("/job", jobRouter);
 app.use("/cheque", chequeRouter);
 app.use("/report", reportRouter);
+app.use("/route", routeRouter);
 
 
 

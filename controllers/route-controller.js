@@ -1,19 +1,19 @@
 "use strict";
-var InvoiceService = require("../services/invoice-service");
+const RouteService = require("../services/route-service");
 var response = require("../utils/response-utils");
 
-async function getAllInvoices(req, res) {
+async function SaveRoute(req, res) {
   try {
-    const result = await InvoiceService.getAllInvoices();
+    const result = await RouteService.SaveRoute(req);
     if (result.status === 200) {
       return response.sendSuccessResponse(
-        "Invoices retrieved successfully",
+        "Route saved successfully",
         result,
         res
       );
     } else {
       return response.sendBadRequestResponse(
-        "Error while retrieving invoices",
+        "Error while saving route",
         null,
         result.error,
         res
@@ -21,7 +21,7 @@ async function getAllInvoices(req, res) {
     }
   } catch (err) {
     return response.sendServerErrorResponse(
-      "Error while retrieving invoices",
+      "Error while saving route",
       null,
       err,
       res
@@ -29,18 +29,18 @@ async function getAllInvoices(req, res) {
   }
 }
 
-async function updateDeliveryAndDiscount(req, res) {
+async function getAllRoutes(req, res) {
   try {
-    const result = await InvoiceService.updateDeliveryAndDiscount(req);
+    const result = await RouteService.getAllRoutes();
     if (result.status === 200) {
       return response.sendSuccessResponse(
-        "Invoice updated successfully",
+        "Routes fetched successfully",
         result,
         res
       );
     } else {
       return response.sendBadRequestResponse(
-        "Error while updating invoice",
+        "Error while fetching route",
         null,
         result.error,
         res
@@ -48,7 +48,7 @@ async function updateDeliveryAndDiscount(req, res) {
     }
   } catch (err) {
     return response.sendServerErrorResponse(
-      "Error while updating invoice",
+      "Error while fetching route",
       null,
       err,
       res
@@ -56,63 +56,56 @@ async function updateDeliveryAndDiscount(req, res) {
   }
 }
 
-async function getInvoiceByCustomerId(req, res) {
+async function updateRoute(req, res) {
   try {
-    const result = await InvoiceService.getInvoiceByCustomerId(req.params.id);
+    console.log(req.params.routeId);
+    const result = await RouteService.updateRoute(req);
     if (result.status === 200) {
       return response.sendSuccessResponse(
-        "Invoices retrieved successfully",
+        "Route Updated Successfully",
         result,
         res
       );
     } else {
       return response.sendBadRequestResponse(
-        "Error while retrieving invoices",
+        "Error while updating route",
         null,
         result.error,
         res
       );
     }
   } catch (err) {
-    return response.sendServerErrorResponse(
-      "Error while retrieving invoices",
-      null,
-      err,
-      res
-    );
+    console.log(err);
+    // return response.sendServerErrorResponse("Error while updating route",null,err,res);
   }
 }
 
-async function updateInvoice(req, res) {
+async function deleteRoute(req, res) {
   try {
-    const result = await InvoiceService.updateInvoice(req);
+    const result = await RouteService.deleteRoute(req);
     if (result.status === 200) {
       return response.sendSuccessResponse(
-        "Invoice updated successfully",
+        "Route deleted Successfully",
         result,
         res
       );
     } else {
       return response.sendBadRequestResponse(
-        "Error while updating invoice",
+        "Error while deleting route",
         null,
         result.error,
         res
       );
     }
   } catch (err) {
-    return response.sendServerErrorResponse(
-      "Error while updating invoice",
-      null,
-      err,
-      res
-    );
+    console.log(err);
+    // return response.sendServerErrorResponse("Error while deleting route",null,err,res);
   }
 }
 
 module.exports = {
-  getAllInvoices,
-  updateInvoice,
-  getInvoiceByCustomerId,
-  updateDeliveryAndDiscount,
+  SaveRoute,
+  getAllRoutes,
+  updateRoute,
+  deleteRoute,
 };

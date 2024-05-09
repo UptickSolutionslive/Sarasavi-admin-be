@@ -45,9 +45,15 @@ async function getAllUsers(req, res) {
 
 async function deleteUser(req, res) {
     try {
-        const { userId } = req.body;
-        const result = await UserService.deleteUserById(userId);
-        return response.sendSuccessResponse(`User with ID '${userId}' deleted successfully`, result, res);
+        
+        const result = await UserService.deleteUserById(req.params.userId);
+
+        if(result.status === 200){
+            return response.sendSuccessResponse(result.message, null, res);
+        } else {
+            return response.sendBadRequestResponse(result.message, null, result.error, res);
+        }
+
     } catch (err) {
         return response.sendServerErrorResponse("Error deleting user", null, err, res);
     }

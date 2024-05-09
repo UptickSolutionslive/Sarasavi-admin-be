@@ -44,6 +44,11 @@ const customerSchema = new Schema(
     walletBalance: {
       type: Number,
     },
+    route:{
+      ref: "route",
+      type: Schema.Types.ObjectId,
+      required: true,
+    }
   },
   { timestamps: true }
 );

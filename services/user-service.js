@@ -88,10 +88,12 @@ async function getAllUsers() {
 async function deleteUserById(userId) {
     try {
         const deletedUser = await userModel.findByIdAndDelete(userId);
-        if (!deletedUser) {
+        console.log(deletedUser);
+        if(deletedUser === null){
             throw new Error(`User with ID '${userId}' not found`);
         }
         return { status: 200, message: `User with ID '${userId}' deleted successfully` };
+        
     } catch (error) {
         console.error("Error deleting user:", error);
         return { status: 500, error: error.message };

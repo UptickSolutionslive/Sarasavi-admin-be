@@ -1,5 +1,6 @@
 const InvoiceModel = require("../models/invoice-model");
 const OrderModel = require("../models/order-model");
+const JobModel = require("../models/job-model");
 
 async function createInvoice(order) {
   try {
@@ -9,6 +10,7 @@ async function createInvoice(order) {
       date: order.date,
       order_id: order._id,
       discount: 0,
+      delivery_charges: 0,
       total: order.total,
       paidAmount: 0,
       balance: order.total,
@@ -40,19 +42,37 @@ async function getAllInvoices() {
     return err;
   }
 }
-async function updateInvoice(req) {
+async function updateDeliveryAndDiscount(req) {
   try {
     const invoice = await InvoiceModel.findOne({
       _id: req.params.id,
     });
+
     const OrderId = invoice.order_id;
+    const order = await OrderModel.findOne({
+      _id: OrderId,
+    });
+    const job = await JobModel.findOne({
+      _id: order.job_id,
+    });
     if (invoice != null) {
       const result = await OrderModel.updateOne(
         {
           _id: OrderId,
         },
         {
-          discount: req.body.discount,
+          discount: 0,
+          delivery_charges: req.body.delivery_charges,
+        }
+      );
+
+      const res = await JobModel.updateOne(
+        {
+          _id: order.job_id,
+        },
+        {
+          discount: 0,
+          delivery_charges: req.body.delivery_charges,
         }
       );
 
@@ -63,8 +83,10 @@ async function updateInvoice(req) {
           },
           {
             discount: req.body.discount,
-            total: invoice.total - req.body.discount,
-            balance: invoice.total - req.body.discount,
+            delivery_charges: req.body.delivery_charges,
+            total: order.total - parseInt(req.body.discount) + parseInt(req.body.delivery_charges),
+            balance:
+            order.total - parseInt(req.body.discount) + parseInt(req.body.delivery_charges),
           }
         );
         if (result != null) {
@@ -116,7 +138,11 @@ async function updateInvoice(invoice) {
       const res = await InvoiceModel.findByIdAndUpdate(invoice[i].inv_id, {
         paidAmount: exInvoice.paidAmount + invoice[i].paidAmount,
         balance: exInvoice.balance - invoice[i].paidAmount,
-        isCompleted: exInvoice.total === invoice[i].paidAmount || exInvoice.balance === invoice[i].paidAmount ? true : false,
+        isCompleted:
+          exInvoice.total === invoice[i].paidAmount ||
+          exInvoice.balance === invoice[i].paidAmount
+            ? true
+            : false,
       });
       if (!res) {
         return { status: 400, error: "Error while updating invoice" };
@@ -131,7 +157,7 @@ async function updateInvoice(invoice) {
 module.exports = {
   createInvoice,
   getAllInvoices,
-  updateInvoice,
+  updateDeliveryAndDiscount,
   getInvoiceByCustomerId,
   updateInvoice,
 };
