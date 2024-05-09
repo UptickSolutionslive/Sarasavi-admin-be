@@ -49,7 +49,7 @@ async function getAllCustomers() {
 
 async function updateCustomer(req) {
   let cusId = req.params.id;
-  const { name, mobileNo, email, address, cPerson, cMobileNo, remark, creditLimit } = req.body;
+  const { name, mobileNo, email, address, cPerson, cMobileNo, remark, creditLimit,route} = req.body;
 
   const update = {
     name,
@@ -59,7 +59,8 @@ async function updateCustomer(req) {
     cPerson,
     cMobileNo,
     remark,
-    creditLimit
+    creditLimit,
+    route
   }
   try {
     const result = await customer.findByIdAndUpdate(cusId, update);
