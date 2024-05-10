@@ -136,10 +136,95 @@ async function updateJob(req, res) {
   }
 }
 
+async function getWastedJobs (req, res) {
+  try {
+    const result = await JobService.getWastedJobs();
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Wasted Jobs fetched successfully",
+        result,
+        res
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while fetching wasted jobs",
+        null,
+        result.error,
+        res
+      );
+    }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while fetching wasted jobs",
+      null,
+      err,
+      res
+    );
+  }
+}
+
+async function saveWastedJob(req, res) {
+  try {
+    const result = await JobService.saveWastedJob(req);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Wasted Job saved successfully",
+        result,
+        res
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while saving wasted job",
+        null,
+        result.error,
+        res
+      );
+    }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while saving wasted job",
+      null,
+      err,
+      res
+    );
+  }
+}
+
+async function deleteWastedJob(req, res) {
+  try {
+    const result = await JobService.deleteWastedJob(req);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Wasted Job deleted successfully",
+        result,
+        res
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while deleting wasted job",
+        null,
+        result.error,
+        res
+      );
+    }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while deleting wasted job",
+      null,
+      err,
+      res
+    );
+  }
+}
+
 module.exports = {
   createJob,
   activateJob,
   getAllJobs,
   deletedJob,
   updateJob,
+  getWastedJobs,
+  saveWastedJob,
+  deleteWastedJob,
+
 };

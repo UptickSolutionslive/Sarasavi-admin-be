@@ -23,4 +23,16 @@ router.route("/:id").put((req, res) => {
   JobController.updateJob(req, res);
 });
 
+router.route("/wasted").post((req, res) => {
+  JobController.saveWastedJob(req, res);
+});
+
+router.route("/wasted").get((req, res) => {
+  JobController.getWastedJobs(req, res);
+});
+
+router.route("/wasted/:id").delete((req, res) => {
+  JobController.deleteWastedJob(req, res);
+});
+
 module.exports = router;

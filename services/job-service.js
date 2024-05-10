@@ -4,6 +4,7 @@ const orderModel = require("../models/order-model");
 const InvoiceService = require("../services/invoice-service");
 const CustomerService = require("../services/customer-service");
 const OrderService = require("../services/order-service");
+const WastedJobModel = require("../models/wastedJob-model");
 
 async function createJob(req, res) {
   try {
@@ -179,10 +180,58 @@ async function updateQuantity(jobId) {
   return { status: 200, result };
 }
 
+async function saveWastedJob(req) {
+  const wastedJob = new WastedJobModel({
+    job_id: req.body.jobId,
+  });
+  const result = await wastedJob.save();
+  if (!result) {
+    return { status: 400, error: "Error while saving wasted job" };
+  }
+  return { status: 200, result };
+}
+
+async function getWastedJobs(req, res) {
+  try {
+    const wastedJobIds = await WastedJobModel.find();
+    const wastedJobs = [];
+    for (let i = 0; i < wastedJobIds.length; i++) {
+      const wastedJob = await JobModel.findOne({
+        _id: wastedJobIds[i].job_id,
+      });
+      wastedJobs.push(wastedJob);
+    }
+    const result = wastedJobs;
+    return { status: 200, result };
+  } catch (error) {
+    return { status: 400, error };
+  }
+}
+
+async function deleteWastedJob(req, res) {
+  try {
+    const jobId = req.params.id;
+    console.log(jobId);
+    const record = await WastedJobModel.findOne({ job_id: jobId });
+    console.log(record);
+    const result = await WastedJobModel.findByIdAndDelete(record._id);
+    if (!result) {
+      return { status: 400, error: "Error while deleting wasted job" };
+    } else {
+      return { status: 200, result };
+    }
+  } catch (err) {
+    return err;
+  }
+}
+
 module.exports = {
   createJob,
   activateJob,
   getJobs,
   deleteJob,
   updateJob,
+  saveWastedJob,
+  getWastedJobs,
+  deleteWastedJob,
 };
