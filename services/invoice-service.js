@@ -61,7 +61,7 @@ async function updateDeliveryAndDiscount(req) {
           _id: OrderId,
         },
         {
-          discount: 0,
+          discount: req.body.discount,
           delivery_charges: req.body.delivery_charges,
         }
       );
@@ -71,7 +71,7 @@ async function updateDeliveryAndDiscount(req) {
           _id: order.job_id,
         },
         {
-          discount: 0,
+          discount: req.body.discount,
           delivery_charges: req.body.delivery_charges,
         }
       );
