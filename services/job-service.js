@@ -5,6 +5,8 @@ const InvoiceService = require("../services/invoice-service");
 const CustomerService = require("../services/customer-service");
 const OrderService = require("../services/order-service");
 const WastedJobModel = require("../models/wastedJob-model");
+const wastedJobModel = require("../models/wastedJob-model");
+var GrnService = require("../services/grn-service");
 
 async function createJob(req, res) {
   try {
@@ -181,9 +183,9 @@ async function updateQuantity(jobId) {
 }
 
 async function saveWastedJob(req) {
-  const wastedJob = new WastedJobModel({
-    job_id: req.body.jobId,
-  });
+  console.log(req.body);
+  console.log(req.body.items);
+  const wastedJob = new WastedJobModel(req.body);
   const result = await wastedJob.save();
   if (!result) {
     return { status: 400, error: "Error while saving wasted job" };
@@ -193,15 +195,7 @@ async function saveWastedJob(req) {
 
 async function getWastedJobs(req, res) {
   try {
-    const wastedJobIds = await WastedJobModel.find();
-    const wastedJobs = [];
-    for (let i = 0; i < wastedJobIds.length; i++) {
-      const wastedJob = await JobModel.findOne({
-        _id: wastedJobIds[i].job_id,
-      });
-      wastedJobs.push(wastedJob);
-    }
-    const result = wastedJobs;
+    const result = await WastedJobModel.find().sort({ createdAt: -1 });
     return { status: 200, result };
   } catch (error) {
     return { status: 400, error };
@@ -211,14 +205,35 @@ async function getWastedJobs(req, res) {
 async function deleteWastedJob(req, res) {
   try {
     const jobId = req.params.id;
-    console.log(jobId);
-    const record = await WastedJobModel.findOne({ job_id: jobId });
-    console.log(record);
-    const result = await WastedJobModel.findByIdAndDelete(record._id);
+    const result = await WastedJobModel.findByIdAndDelete(jobId);
     if (!result) {
       return { status: 400, error: "Error while deleting wasted job" };
     } else {
       return { status: 200, result };
+    }
+  } catch (err) {
+    return err;
+  }
+}
+
+async function approveWastedJob(req, res) {
+  try {
+    console.log(req.params.id);
+    const jobId = req.params.id;
+    const record = await WastedJobModel.findOne({ _id: jobId });
+    console.log(record);
+
+    const updateQuantity = await GrnService.reduceQuantity(record);
+
+    console.log(updateQuantity);
+    if (updateQuantity.status === 200) {
+      record.isAccepted = true;
+      const result = await record.save();
+      if (!result) {
+        return { status: 400, error: "Error while approving wasted job" };
+      } else {
+        return { status: 200, result };
+      }
     }
   } catch (err) {
     return err;
@@ -234,4 +249,5 @@ module.exports = {
   saveWastedJob,
   getWastedJobs,
   deleteWastedJob,
+  approveWastedJob,
 };

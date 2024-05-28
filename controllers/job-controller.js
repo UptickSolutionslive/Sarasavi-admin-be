@@ -217,6 +217,34 @@ async function deleteWastedJob(req, res) {
   }
 }
 
+async function approveWastedJob(req, res) {
+ 
+  try {
+    const result = await JobService.approveWastedJob(req);
+    if (result.status === 200) {
+      return response.sendSuccessResponse(
+        "Wasted Job approved successfully",
+        result,
+        res
+      );
+    } else {
+      return response.sendBadRequestResponse(
+        "Error while approving wasted job",
+        null,
+        result.error,
+        res
+      );
+    }
+  } catch (err) {
+    return response.sendServerErrorResponse(
+      "Error while approving wasted  job",
+      null,
+      err,
+      res
+    );
+  }
+}
+
 module.exports = {
   createJob,
   activateJob,
@@ -226,5 +254,6 @@ module.exports = {
   getWastedJobs,
   saveWastedJob,
   deleteWastedJob,
+  approveWastedJob,
 
 };

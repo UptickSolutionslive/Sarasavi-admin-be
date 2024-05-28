@@ -34,5 +34,8 @@ router.route("/wasted").get((req, res) => {
 router.route("/wasted/:id").delete((req, res) => {
   JobController.deleteWastedJob(req, res);
 });
+router.route("/approvewasted/:id").patch((req, res) => {
+  JobController.approveWastedJob(req, res);
+});
 
 module.exports = router;

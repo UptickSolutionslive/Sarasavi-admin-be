@@ -2,9 +2,32 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const wastedJobSchema = new Schema({
-  job_id: {
+  type: {
+    type: String,
+  },
+  reason: {
+    type: String,
+  },
+  jobId: {
     type: Schema.Types.ObjectId,
     ref: "job",
+  },
+  items: [
+    {
+      item: {
+        type: Schema.Types.ObjectId,
+        ref: "item",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  isAccepted: {
+    type: Boolean,
+    default: false,
   },
   created_at: {
     type: Date,
