@@ -68,7 +68,7 @@ app.use("/job", jobRouter);
 app.use("/cheque", chequeRouter);
 app.use("/report", reportRouter);
 app.use("/route", routeRouter);
-app.use("/expenses", expensesRouter);
+app.use("/expense", expensesRouter);
 
 
 

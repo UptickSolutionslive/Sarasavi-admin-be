@@ -4,8 +4,9 @@ const response = require("../utils/response-utils");
 
 async function addExpense(req, res) {
     try {
-        const { date, purpose, other, amount } = req.body;
-        const result = await ExpenseService.addExpense(date, purpose, other, amount);
+        console.log(req.body);
+        const result = await ExpenseService.addExpense(req);
+        console.log(result);
         if (result.status === 200) {
             return response.sendSuccessResponse("Expense added successfully", result, res);
         } else {
