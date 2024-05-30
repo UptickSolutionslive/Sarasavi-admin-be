@@ -4,6 +4,7 @@ var response = require("../utils/response-utils");
 
 async function createReceipt(req, res) {
     try {
+        
         const result = await ReceiptService.createReceipt(req.body);
         if (result.status === 200) {
             return response.sendSuccessResponse("Receipt created successfully", result, res);

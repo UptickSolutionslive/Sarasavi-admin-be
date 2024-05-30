@@ -36,7 +36,10 @@ const InvoiceService = require("./invoice-service");
 
 // }
 async function createReceipt(receipt) {
+  console.log(receipt.customer);
+  console.log(receipt.walletBalance);
   try {
+
     const newReceipt = new ReceiptModel(receipt);
     const result = await newReceipt.save();
 
@@ -54,13 +57,10 @@ async function createReceipt(receipt) {
       return { status: 200, result };
     } else {
       const Customer = await CustomerModel.findById(receipt.customer);
-      // Customer.paidAmount = Customer.paidAmount + receipt.receipt_amount;
       Customer.walletBalance = Customer.walletBalance + receipt.walletBalance;
+      Customer.save();
       const result = await InvoiceService.updateInvoice(receipt.invoice);
-      // if (Customer.paidAmount >= Customer.orderedAmount) {
-      //     Customer.balance = Customer.paidAmount - Customer.orderedAmount;
-      // }
-      //   await Customer.save();
+
       if (result.status === 400) {
         return { status: 400, error: result.error };
       }
