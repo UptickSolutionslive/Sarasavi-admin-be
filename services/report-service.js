@@ -1,3 +1,4 @@
+const { startOfDay, endOfDay, startOfMonth, endOfMonth, parseISO } = require('date-fns');
 const Invoice = require("../models/invoice-model");
 const Order = require("../models/order-model");
 
@@ -9,22 +10,22 @@ async function getInvoiceByCuzAndDate(data) {
 
     switch (dateType) {
       case "daily":
-        const startOftheDay = new Date(date);
-        startOftheDay.setHours(0, 0, 0, 0);
-        const endOftheDay = new Date(date);
-        endOftheDay.setHours(23, 59, 59, 999);
-        ordersQuery.date = { $gte: startOftheDay, $lte: endOftheDay };
+        const parsedDate = parseISO(date);
+        const startOfDayDate = startOfDay(parsedDate);
+        const endOfDayDate = endOfDay(parsedDate);
+        ordersQuery.date = { $gte: startOfDayDate, $lte: endOfDayDate };
         break;
       case "monthly":
         const year = parseInt(month.substring(0, 4));
         const monthNumber = parseInt(month.substring(5)) - 1; // Months are 0-indexed
-        const startOfMonth = new Date(year, monthNumber, 1); // Start of the month
-        const endOfMonth = new Date(year, monthNumber + 1, 0); // End of the month
-        ordersQuery.date = { $gte: startOfMonth, $lt: endOfMonth };
-
+        const startOfMonthDate = startOfMonth(new Date(Date.UTC(year, monthNumber, 1)));
+        const endOfMonthDate = endOfMonth(new Date(Date.UTC(year, monthNumber + 1, 0)));
+        ordersQuery.date = { $gte: startOfMonthDate, $lte: endOfMonthDate };
         break;
       case "range":
-        ordersQuery.date = { $gte: startDate, $lte: endDate };
+        const parsedStartDate = parseISO(startDate);
+        const parsedEndDate = parseISO(endDate);
+        ordersQuery.date = { $gte: startOfDay(parsedStartDate), $lte: endOfDay(parsedEndDate) };
         break;
       default:
         throw new Error("Invalid dateType");
