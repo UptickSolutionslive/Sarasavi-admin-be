@@ -1,22 +1,36 @@
 let customer = require("../models/customer-model");
 
 async function SaveCustomer(req) {
-
   try {
     const result = await customer.create(req.body);
 
     if (result) {
-      return { status: 200, message: "Customer saved successfully", data: result };
+      return {
+        status: 200,
+        message: "Customer saved successfully",
+        data: result,
+      };
+    } else {
+      return {
+        status: 400,
+        message: "Error while saving customer",
+        data: null,
+        error: result.error,
+      };
     }
-    else {
-      return { status: 400, message: "Error while saving customer", data: null, error: result.error };
-    }
-
   } catch (err) {
     if (err.code === 11000 && err.keyPattern && err.keyValue) {
-      return { status: 400, message: `Duplicate key error ${JSON.stringify(err.keyValue)}`, error: err };
+      return {
+        status: 400,
+        message: `Duplicate key error ${JSON.stringify(err.keyValue)}`,
+        error: err,
+      };
     } else {
-      return { status: 500, message: `Error while saving customer ${err}`, error: err };
+      return {
+        status: 500,
+        message: `Error while saving customer ${err}`,
+        error: err,
+      };
     }
   }
 }
@@ -49,7 +63,18 @@ async function getAllCustomers() {
 
 async function updateCustomer(req) {
   let cusId = req.params.id;
-  const { name, mobileNo, email, address, cPerson, cMobileNo, remark, creditLimit,route} = req.body;
+  const {
+    name,
+    mobileNo,
+    email,
+    address,
+    cPerson,
+    cMobileNo,
+    remark,
+    creditLimit,
+    route,
+    paymentType,
+  } = req.body;
 
   const update = {
     name,
@@ -60,8 +85,9 @@ async function updateCustomer(req) {
     cMobileNo,
     remark,
     creditLimit,
-    route
-  }
+    route,
+    paymentType,
+  };
   try {
     const result = await customer.findByIdAndUpdate(cusId, update);
     console.log(result);
@@ -126,7 +152,6 @@ async function updateOrderedAmount(id, job) {
     const updatedOrderedAmount = existingCustomer.orderedAmount + job.total;
 
     console.log("Updated ordered amount:", updatedOrderedAmount);
-
 
     // Prepare the update object
     const update = {
