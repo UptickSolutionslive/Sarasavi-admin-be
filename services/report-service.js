@@ -2,6 +2,10 @@ const { startOfDay, endOfDay, startOfMonth, endOfMonth, parseISO } = require('da
 const Invoice = require("../models/invoice-model");
 const Order = require("../models/order-model");
 
+function toLocalDate(date) {
+  return new Date(date);
+}
+
 async function getInvoiceByCuzAndDate(data) {
   try {
     const { customerId, dateType, date, startDate, endDate, month } = data;
@@ -11,21 +15,25 @@ async function getInvoiceByCuzAndDate(data) {
     switch (dateType) {
       case "daily":
         const parsedDate = parseISO(date);
-        const startOfDayDate = startOfDay(parsedDate);
-        const endOfDayDate = endOfDay(parsedDate);
+        const startOfDayDate = startOfDay(toLocalDate(parsedDate));
+        console.log(startOfDayDate);
+        const endOfDayDate = endOfDay(toLocalDate(parsedDate));
+        console.log(endOfDayDate);
         ordersQuery.date = { $gte: startOfDayDate, $lte: endOfDayDate };
         break;
       case "monthly":
         const year = parseInt(month.substring(0, 4));
         const monthNumber = parseInt(month.substring(5)) - 1; // Months are 0-indexed
-        const startOfMonthDate = startOfMonth(new Date(Date.UTC(year, monthNumber, 1)));
-        const endOfMonthDate = endOfMonth(new Date(Date.UTC(year, monthNumber + 1, 0)));
+        const startOfMonthDate = startOfMonth(new Date(year, monthNumber, 1));
+        const endOfMonthDate = endOfMonth(new Date(year, monthNumber, 1));
         ordersQuery.date = { $gte: startOfMonthDate, $lte: endOfMonthDate };
         break;
       case "range":
         const parsedStartDate = parseISO(startDate);
         const parsedEndDate = parseISO(endDate);
-        ordersQuery.date = { $gte: startOfDay(parsedStartDate), $lte: endOfDay(parsedEndDate) };
+        const startRangeDate = startOfDay(toLocalDate(parsedStartDate));
+        const endRangeDate = endOfDay(toLocalDate(parsedEndDate));
+        ordersQuery.date = { $gte: startRangeDate, $lte: endRangeDate };
         break;
       default:
         throw new Error("Invalid dateType");
