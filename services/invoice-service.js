@@ -129,6 +129,31 @@ async function getInvoiceByCustomerId(customerId) {
     return err;
   }
 }
+// async function updateInvoice(invoice) {
+//   try {
+//     console.log("invoice", invoice.length);
+//     for (let i = 0; i < invoice.length; i++) {
+//       const exInvoice = await InvoiceModel.findById(invoice[i].inv_id);
+//       console.log("ssss", exInvoice);
+//       const res = await InvoiceModel.findByIdAndUpdate(invoice[i].inv_id, {
+//         paidAmount: exInvoice.paidAmount + invoice[i].paidAmount,
+//         balance: exInvoice.balance - invoice[i].paidAmount,
+//         isCompleted:
+//           exInvoice.total === invoice[i].paidAmount ||
+//           exInvoice.balance === invoice[i].paidAmount
+//             ? true
+//             : false,
+//       });
+//       if (!res) {
+//         return { status: 400, error: "Error while updating invoice" };
+//       }
+//     }
+//     return { status: 200, message: "Invoices updated successfully" };
+//   } catch (err) {
+//     return err;
+//   }
+// }
+
 async function updateInvoice(invoice) {
   try {
     console.log("invoice", invoice.length);
@@ -150,9 +175,10 @@ async function updateInvoice(invoice) {
     }
     return { status: 200, message: "Invoices updated successfully" };
   } catch (err) {
-    return err;
+    return { status: 400, error: err.message || err };
   }
 }
+
 
 module.exports = {
   createInvoice,

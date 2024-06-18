@@ -35,11 +35,55 @@ const InvoiceService = require("./invoice-service");
 //     }
 
 // }
+// async function createReceipt(receipt) {
+//   console.log(receipt.customer);
+//   console.log(receipt.walletBalance);
+//   try {
+
+//     const newReceipt = new ReceiptModel(receipt);
+//     const result = await newReceipt.save();
+
+//     if (receipt.paymentMethod === "cheque") {
+//       const cheque = await chequesModel.create({
+//         cheque_no: receipt.chequeNo,
+//         bank: receipt.bank,
+//         amount: receipt.receipt_amount,
+//         date: receipt.chequeDate,
+//         customer: receipt.customer,
+//         status: "pending",
+//         remarks: receipt.remarks,
+//       });
+//       const result = await InvoiceService.updateInvoice(receipt.invoice);
+//       return { status: 200, result };
+//     } else {
+//       const Customer = await CustomerModel.findById(receipt.customer);
+//       Customer.walletBalance = Customer.walletBalance + receipt.walletBalance;
+//       Customer.save();
+//       const result = await InvoiceService.updateInvoice(receipt.invoice);
+
+//       if (result.status === 400) {
+//         return { status: 400, error: result.error };
+//       }
+//       return { status: 200, result };
+//     }
+//   } catch (err) {
+//     return { status: 400, error: err };
+//   }
+// }
+
 async function createReceipt(receipt) {
   console.log(receipt.customer);
   console.log(receipt.walletBalance);
   try {
+    // First, attempt to update the invoice
+    const invoiceUpdateResult = await InvoiceService.updateInvoice(receipt.invoice);
 
+    // Check if the invoice update was successful
+    if (invoiceUpdateResult.status === 400) {
+      return { status: 400, error: invoiceUpdateResult.error };
+    }
+
+    // Proceed with creating the receipt since invoice update was successful
     const newReceipt = new ReceiptModel(receipt);
     const result = await newReceipt.save();
 
@@ -53,23 +97,18 @@ async function createReceipt(receipt) {
         status: "pending",
         remarks: receipt.remarks,
       });
-      const result = await InvoiceService.updateInvoice(receipt.invoice);
-      return { status: 200, result };
     } else {
       const Customer = await CustomerModel.findById(receipt.customer);
       Customer.walletBalance = Customer.walletBalance + receipt.walletBalance;
-      Customer.save();
-      const result = await InvoiceService.updateInvoice(receipt.invoice);
-
-      if (result.status === 400) {
-        return { status: 400, error: result.error };
-      }
-      return { status: 200, result };
+      await Customer.save();
     }
+
+    return { status: 200, result };
   } catch (err) {
-    return { status: 400, error: err };
+    return { status: 400, error: err.message || err };
   }
 }
+
 async function getReceipts() {
   try {
     const result = await ReceiptModel.find()
