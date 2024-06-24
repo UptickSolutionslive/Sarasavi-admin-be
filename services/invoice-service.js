@@ -159,7 +159,6 @@ async function updateInvoice(invoice) {
     console.log("invoice", invoice.length);
     for (let i = 0; i < invoice.length; i++) {
       const exInvoice = await InvoiceModel.findById(invoice[i].inv_id);
-      console.log("ssss", exInvoice);
       const res = await InvoiceModel.findByIdAndUpdate(invoice[i].inv_id, {
         paidAmount: exInvoice.paidAmount + invoice[i].paidAmount,
         balance: exInvoice.balance - invoice[i].paidAmount,
