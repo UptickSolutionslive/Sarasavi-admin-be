@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 
 
 // MongoDB connection update here
-const mongoDBUri = process.env.MONGO_URL;
+const mongoDBUri = "mongodb+srv://inventorysystem2024:QAg84fv9TnZJDwnt@cluster0.zntgs6j.mongodb.net/production";
 mongoose.connect(mongoDBUri, {
     // Remove the deprecated options
     // useNewUrlParser: true,
