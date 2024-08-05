@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 
-// MongoDB connection
+// MongoDB connection update here
 const mongoDBUri = process.env.MONGO_URL;
 mongoose.connect(mongoDBUri, {
     // Remove the deprecated options
