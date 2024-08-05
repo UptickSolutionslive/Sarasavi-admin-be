@@ -56,19 +56,19 @@ const expensesRouter = require("./routes/expenses-route");
 
 
 
-app.use("/customer", customerRouter);
-app.use("/category", categoryRouter);
-app.use("/item", itemRouter);
-app.use("/grn", grnRouter);
-app.use("/order", OrderRouter);
-app.use("/invoice", invoiceRouter);
-app.use("/user", UserRouter)
-app.use("/receipt", receiptRouter);
-app.use("/job", jobRouter);
-app.use("/cheque", chequeRouter);
-app.use("/report", reportRouter);
-app.use("/route", routeRouter);
-app.use("/expense", expensesRouter);
+app.use("/api/customer", customerRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/item", itemRouter);
+app.use("/api/grn", grnRouter);
+app.use("/api/order", OrderRouter);
+app.use("/api/invoice", invoiceRouter);
+app.use("/api/user", UserRouter)
+app.use("/api/receipt", receiptRouter);
+app.use("/api/job", jobRouter);
+app.use("/api/cheque", chequeRouter);
+app.use("/api/report", reportRouter);
+app.use("/api/route", routeRouter);
+app.use("/api/expense", expensesRouter);
 
 
 
