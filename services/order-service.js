@@ -1,7 +1,7 @@
 const OrderModel = require("../models/order-model");
 const ItemModel = require("../models/item-model");
 const InvoiceService = require("../services/invoice-service");
-const SmsService = require("../services/sms-service");
+// const SmsService = require("../services/sms-service");
 const customerModel = require("../models/customer-model");
 const CustomerService = require("../services/customer-service");
 const cron = require("node-cron");
@@ -38,7 +38,7 @@ async function createOrder(job) {
     } else {
       // await reduceQuantity(job);
       const invoice = await InvoiceService.createInvoice(result);
-      const sms = await SmsService.sendSms(job);
+      // const sms = await SmsService.sendSms(job);
 
       const res = await CustomerService.updateOrderedAmount(
         job.customer.customerId,
