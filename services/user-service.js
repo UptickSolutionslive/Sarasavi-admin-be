@@ -64,7 +64,7 @@ function generateToken(username, role) {
         role: role
     };
 
-    const secretKey = process.env.JWT_SECRET; 
+    const secretKey = "your_secret_key_here"; 
     const options = {
         expiresIn: '1h'
     };
