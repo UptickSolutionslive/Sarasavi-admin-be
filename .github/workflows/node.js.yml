@@ -48,7 +48,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: upticksolutionslive/sarasavi-admin-be
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/sarasavi-admin-be
 
 
 
