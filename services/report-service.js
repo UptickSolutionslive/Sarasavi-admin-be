@@ -124,8 +124,13 @@ async function getInvoiceByCuzAndDate(data) {
 
 async function calculatePreviousBalance(customerId, date) {
   try {
-    const previousOrdersQuery = { "customer.customerId": customerId, date: { $lt: date } };
+    console.log(customerId)
+    const providedDate = new Date(date);
+    const lastMonthEndDate = new Date(providedDate.getFullYear(), providedDate.getMonth(), 0); 
+    console.log("Filtering up to:", lastMonthEndDate);
+    const previousOrdersQuery = { "customer.customerId": customerId, date: { $lte: lastMonthEndDate } };
     const previousOrders = await Order.find(previousOrdersQuery);
+    console.log("previous orders",previousOrders)
     let previousInvoices = [];
     let previousBalance = 0;
 
@@ -135,9 +140,9 @@ async function calculatePreviousBalance(customerId, date) {
     }
 
     previousInvoices.forEach((invoice) => {
-      previousBalance += invoice.balance || 0;
+      previousBalance += invoice.balance;
     });
-
+    console.log(previousBalance);
     return previousBalance;
   } catch (error) {
     console.log(error);
