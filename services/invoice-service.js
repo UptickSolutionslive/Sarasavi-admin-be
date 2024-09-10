@@ -30,7 +30,7 @@ async function createInvoice(order) {
 
 async function getAllInvoices() {
   try {
-    const result = await InvoiceModel.find().limit(50)
+    const result = await InvoiceModel.find()
       .populate("order_id")
       .sort({ createdAt: -1 });
     if (!result) {
