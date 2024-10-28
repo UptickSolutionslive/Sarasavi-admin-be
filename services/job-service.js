@@ -7,6 +7,7 @@ const OrderService = require("../services/order-service");
 const WastedJobModel = require("../models/wastedJob-model");
 const wastedJobModel = require("../models/wastedJob-model");
 var GrnService = require("../services/grn-service");
+const mongoose = require("mongoose");
 
 async function createJob(req, res) {
   try {
@@ -23,11 +24,12 @@ async function createJob(req, res) {
       const newJobNoNumeric = parseInt(lastJobNo) + 1;
       // Construct the new job number by concatenating the prefix with the incremented numeric part
       const prefix = lastJob.job_No.replace(lastJobNo, "");
-      newJobNo = `${prefix}${newJobNoNumeric}`;
+      newJobNo = newJobNoNumeric;
     }
 
     // Now, newJobNo holds the new job number
     req.body.job_No = newJobNo;
+    req.body._id = new mongoose.Types.ObjectId();
 
     const job = new JobModel(req.body);
     const result = await job.save();
