@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - main
+      - test
     paths-ignore:
       - 'README.md'
 
@@ -48,7 +48,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/sarasavi-admin-be
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/sarasavi-admin-be-test
 
 
 
