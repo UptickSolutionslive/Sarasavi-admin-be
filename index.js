@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 // MongoDB connection update here
 //mongodb+srv://chamith:pLmJdXxgpNlWeyGo@invoicer.vqc75.mongodb.net/?retryWrites=true&w=majority&appName=Invoicer
 //mongodb+srv://inventorysystem2024:QAg84fv9TnZJDwnt@cluster0.zntgs6j.mongodb.net/production
-const mongoDBUri = "mongodb+srv://inventorysystem2024:QAg84fv9TnZJDwnt@cluster0.zntgs6j.mongodb.net/production";
+const mongoDBUri = "mongodb+srv://inventorysystem2024:QAg84fv9TnZJDwnt@cluster0.zntgs6j.mongodb.net/production-test";
 mongoose.connect(mongoDBUri, {
     // Remove the deprecated options
     // useNewUrlParser: true,
