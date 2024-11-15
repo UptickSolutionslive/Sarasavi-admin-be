@@ -1,12 +1,12 @@
 const InvoiceModel = require("../models/invoice-model");
 const OrderModel = require("../models/order-model");
 const JobModel = require("../models/job-model");
-
+const { v4: uuidv4 } = require('uuid');
 async function createInvoice(order) {
   try {
     const allInvoice = await InvoiceModel.find();
     const invoice = new InvoiceModel({
-      invoice_no: "INV" + (allInvoice.length + 1),
+      invoice_no: uuidv4(),
       date: order.date,
       order_id: order._id,
       discount: 0,
