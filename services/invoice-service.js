@@ -6,7 +6,7 @@ async function createInvoice(order) {
   try {
     const allInvoice = await InvoiceModel.find();
     const invoice = new InvoiceModel({
-      invoice_no: uuidv4,
+      invoice_no: uuidv4(),
       date: order.date,
       order_id: order._id,
       discount: 0,
