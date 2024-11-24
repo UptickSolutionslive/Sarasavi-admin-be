@@ -4,56 +4,17 @@ const OrderModel = require("../models/order-model");
 const JobModel = require("../models/job-model");
 const { v4: uuidv4 } = require('uuid');
 
-// Function to generate the next invoice number
-async function generateNextInvoiceNumber() {
-  try {
-    // Find the latest invoice by sorting in descending order and limiting to 1
-    const latestInvoice = await InvoiceModel.findOne().sort({ invoice_no: -1 });
-
-    if (!latestInvoice) {
-      // If no invoices exist, start with INV10000
-      return 'INV10000';
-    }
-
-    // Extract the numeric part of the invoice_no (after "INV")
-    const currentInvoiceNo = latestInvoice.invoice_no;
-    const match = currentInvoiceNo.match(/^INV(\d+)$/);
-
-    if (!match) {
-      // If the format is incorrect, throw an error
-      throw new Error('Invalid invoice number format');
-    }
-
-    // Extract the numeric part from the match (index 1 contains the number)
-    const numericPart = parseInt(match[1], 10);
-
-    if (isNaN(numericPart)) {
-      throw new Error('Invalid invoice number format');
-    }
-
-    // Increment the number by 1
-    const nextNumericPart = numericPart + 1;
-
-    // Generate the new invoice_no with the "INV" prefix
-    const nextInvoiceNo = `INV${nextNumericPart}`;
-
-    return nextInvoiceNo;
-
-  } catch (error) {
-    console.error('Error generating invoice number:', error);
-    throw new Error('Unable to generate the next invoice number');
-  }
-}
 
 
 async function createInvoice(order) {
   try {
-    // Generate the next invoice number
-    const invoice_no = await generateNextInvoiceNumber();
+    // Fetch the latest invoice number from the database and increment it by 1
+    const latestInvoice = await InvoiceModel.findOne().sort({ invoice_no: -1 }).exec();
+    const newInvoiceNo = latestInvoice ? latestInvoice.invoice_no + 1 : 1;
 
     // Create the invoice document
     const invoice = new InvoiceModel({
-      invoice_no: invoice_no,  // Using the generated invoice number
+      invoice_no: newInvoiceNo,  // Using the incremented invoice number
       date: order.date,
       order_id: order._id,
       discount: 0,
