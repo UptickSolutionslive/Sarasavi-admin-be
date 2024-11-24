@@ -12,12 +12,24 @@ async function generateNextInvoiceNumber() {
 
     if (!latestInvoice) {
       // If no invoices exist, start with INV10000
-      return 'INV100000';
+      return 'INV10000';
     }
 
     // Extract the numeric part of the invoice_no (after "INV")
     const currentInvoiceNo = latestInvoice.invoice_no;
-    const numericPart = parseInt(currentInvoiceNo.replace('INV', ''), 10);
+    const match = currentInvoiceNo.match(/^INV(\d+)$/);
+
+    if (!match) {
+      // If the format is incorrect, throw an error
+      throw new Error('Invalid invoice number format');
+    }
+
+    // Extract the numeric part from the match (index 1 contains the number)
+    const numericPart = parseInt(match[1], 10);
+
+    if (isNaN(numericPart)) {
+      throw new Error('Invalid invoice number format');
+    }
 
     // Increment the number by 1
     const nextNumericPart = numericPart + 1;
@@ -32,6 +44,7 @@ async function generateNextInvoiceNumber() {
     throw new Error('Unable to generate the next invoice number');
   }
 }
+
 
 async function createInvoice(order) {
   try {
