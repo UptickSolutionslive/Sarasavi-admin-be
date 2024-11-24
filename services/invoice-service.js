@@ -8,13 +8,12 @@ const { v4: uuidv4 } = require('uuid');
 
 async function createInvoice(order) {
   try {
-    // Fetch the latest invoice number from the database and increment it by 1
-    const latestInvoice = await InvoiceModel.findOne().sort({ invoice_no: -1 }).exec();
-    const newInvoiceNo = latestInvoice ? latestInvoice.invoice_no + 1 : 1;
+    // Generate a unique 8-digit invoice number using UUID
+    const invoice_no = uuidv4().split('-')[0].slice(0, 8).toUpperCase(); // Get the first 8 characters of UUID
 
     // Create the invoice document
     const invoice = new InvoiceModel({
-      invoice_no: newInvoiceNo,  // Using the incremented invoice number
+      invoice_no,  // Using the generated unique 8-digit code
       date: order.date,
       order_id: order._id,
       discount: 0,
@@ -37,22 +36,6 @@ async function createInvoice(order) {
     return { status: 400, error: err.message || err };
   }
 }
-
-async function getAllInvoices() {
-  try {
-    const result = await InvoiceModel.find()
-      .populate("order_id")
-      .sort({ createdAt: -1 });
-    if (!result) {
-      return { status: 400, error: "Error while retrieving invoices" };
-    } else {
-      return { status: 200, result };
-    }
-  } catch (err) {
-    return err;
-  }
-}
-
 async function updateDeliveryAndDiscount(req) {
   try {
     const invoice = await InvoiceModel.findOne({
