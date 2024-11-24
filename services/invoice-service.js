@@ -4,17 +4,13 @@ const OrderModel = require("../models/order-model");
 const JobModel = require("../models/job-model");
 const { v4: uuidv4 } = require('uuid');
 
-
-
 async function createInvoice(order) {
   try {
-    // Fetch the latest invoice number from the database and increment it by 1
-    const latestInvoice = await InvoiceModel.findOne().sort({ invoice_no: -1 }).exec();
-    const newInvoiceNo = latestInvoice ? latestInvoice.invoice_no + 1 : 1;
+    const invoice_no = uuidv4().split('-')[0].slice(0, 8).toUpperCase(); 
 
     // Create the invoice document
     const invoice = new InvoiceModel({
-      invoice_no: newInvoiceNo,  // Using the incremented invoice number
+      invoice_no:invoice_no,  
       date: order.date,
       order_id: order._id,
       discount: 0,
@@ -37,7 +33,6 @@ async function createInvoice(order) {
     return { status: 400, error: err.message || err };
   }
 }
-
 async function getAllInvoices() {
   try {
     const result = await InvoiceModel.find()
