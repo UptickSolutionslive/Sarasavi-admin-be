@@ -241,6 +241,75 @@ async function approveWastedJob(req, res) {
     return err;
   }
 }
+async function generateActiveJobsExcel(req, res) {
+  try {
+    // Extract filters from request query
+    const { month, year, customerId } = req.query;
+
+    // Validate the inputs
+    if (!month || !year || !customerId) {
+      return res.status(400).send("Month, year, and customer ID are required.");
+    }
+
+    // Fetch active jobs for the specified customer and date range
+    const startDate = new Date(year, month - 1, 1); // Start of the month
+    const endDate = new Date(year, month, 0); // End of the month
+
+    const jobs = await JobModel.find({
+      isActive: true,
+      "customer.customerId": customerId,
+      date: { $gte: startDate, $lte: endDate },
+    });
+
+    if (jobs.length === 0) {
+      return res.status(404).send("No active jobs found for the specified criteria.");
+    }
+
+    // Create a new Excel workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Active Jobs");
+
+    // Define columns for the Excel sheet
+    worksheet.columns = [
+      { header: "Job No", key: "job_No", width: 15 },
+      { header: "Name", key: "name", width: 25 },
+      { header: "Customer Name", key: "customerName", width: 25 },
+      { header: "Quantity", key: "quantity", width: 10 },
+      { header: "Price", key: "price", width: 10 },
+      { header: "Total", key: "total", width: 15 },
+      { header: "Date", key: "date", width: 20 },
+    ];
+
+    // Add data rows to the worksheet
+    jobs.forEach((job) => {
+      worksheet.addRow({
+        job_No: job.job_No,
+        name: job.name,
+        customerName: job.customer.cName,
+        quantity: job.quantity,
+        price: job.price,
+        total: job.total,
+        date: job.date.toISOString().split("T")[0], // Format date as YYYY-MM-DD
+      });
+    });
+
+    // Set response headers for Excel file download
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", "attachment; filename=active_jobs.xlsx");
+
+    // Write the Excel file to the response
+    await workbook.xlsx.write(res);
+
+    // End the response
+    res.status(200).end();
+  } catch (error) {
+    console.error("Error generating Excel file:", error);
+    res.status(500).send("Error generating Excel file.");
+  }
+}
 
 module.exports = {
   createJob,
@@ -252,4 +321,5 @@ module.exports = {
   getWastedJobs,
   deleteWastedJob,
   approveWastedJob,
+  generateActiveJobsExcel
 };
