@@ -1,12 +1,46 @@
+const mongoose = require('mongoose');
 const InvoiceModel = require("../models/invoice-model");
 const OrderModel = require("../models/order-model");
 const JobModel = require("../models/job-model");
 const { v4: uuidv4 } = require('uuid');
+
+// Function to generate the next invoice number
+async function generateNextInvoiceNumber() {
+  try {
+    // Find the latest invoice by sorting in descending order and limiting to 1
+    const latestInvoice = await InvoiceModel.findOne().sort({ invoice_no: -1 });
+
+    if (!latestInvoice) {
+      // If no invoices exist, start with INV10000
+      return 'INV100000';
+    }
+
+    // Extract the numeric part of the invoice_no (after "INV")
+    const currentInvoiceNo = latestInvoice.invoice_no;
+    const numericPart = parseInt(currentInvoiceNo.replace('INV', ''), 10);
+
+    // Increment the number by 1
+    const nextNumericPart = numericPart + 1;
+
+    // Generate the new invoice_no with the "INV" prefix
+    const nextInvoiceNo = `INV${nextNumericPart}`;
+
+    return nextInvoiceNo;
+
+  } catch (error) {
+    console.error('Error generating invoice number:', error);
+    throw new Error('Unable to generate the next invoice number');
+  }
+}
+
 async function createInvoice(order) {
   try {
-    const allInvoice = await InvoiceModel.find();
+    // Generate the next invoice number
+    const invoice_no = await generateNextInvoiceNumber();
+
+    // Create the invoice document
     const invoice = new InvoiceModel({
-      invoice_no: uuidv4(),
+      invoice_no: invoice_no,  // Using the generated invoice number
       date: order.date,
       order_id: order._id,
       discount: 0,
@@ -16,6 +50,8 @@ async function createInvoice(order) {
       balance: order.total,
       isCompleted: false,
     });
+
+    // Save the invoice to the database
     const result = await invoice.save();
     if (!result) {
       return { status: 400, error: "Error while saving invoice" };
@@ -24,7 +60,7 @@ async function createInvoice(order) {
     }
   } catch (err) {
     console.log(err);
-    return err;
+    return { status: 400, error: err.message || err };
   }
 }
 
@@ -42,6 +78,7 @@ async function getAllInvoices() {
     return err;
   }
 }
+
 async function updateDeliveryAndDiscount(req) {
   try {
     const invoice = await InvoiceModel.findOne({
@@ -129,30 +166,6 @@ async function getInvoiceByCustomerId(customerId) {
     return err;
   }
 }
-// async function updateInvoice(invoice) {
-//   try {
-//     console.log("invoice", invoice.length);
-//     for (let i = 0; i < invoice.length; i++) {
-//       const exInvoice = await InvoiceModel.findById(invoice[i].inv_id);
-//       console.log("ssss", exInvoice);
-//       const res = await InvoiceModel.findByIdAndUpdate(invoice[i].inv_id, {
-//         paidAmount: exInvoice.paidAmount + invoice[i].paidAmount,
-//         balance: exInvoice.balance - invoice[i].paidAmount,
-//         isCompleted:
-//           exInvoice.total === invoice[i].paidAmount ||
-//           exInvoice.balance === invoice[i].paidAmount
-//             ? true
-//             : false,
-//       });
-//       if (!res) {
-//         return { status: 400, error: "Error while updating invoice" };
-//       }
-//     }
-//     return { status: 200, message: "Invoices updated successfully" };
-//   } catch (err) {
-//     return err;
-//   }
-// }
 
 async function updateInvoice(invoice) {
   try {
@@ -177,7 +190,6 @@ async function updateInvoice(invoice) {
     return { status: 400, error: err.message || err };
   }
 }
-
 
 module.exports = {
   createInvoice,
