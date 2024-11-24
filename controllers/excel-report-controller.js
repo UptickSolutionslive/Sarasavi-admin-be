@@ -71,7 +71,7 @@ exports.getActiveJobsExcel = async (req, res) => {
           customerId: job.customer.customerId,  // Added customerId field
           cNumber: job.customer.cNumber,        // Added customer phone number
           cName: job.customer.cName,            // Customer's name
-          item: job.item.name,                  // Assuming the 'item' has a 'name' field (adjust accordingly)
+          item: job.item,                  
           quantity: job.quantity,
           price: job.price,
           total: job.total,
